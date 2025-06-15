@@ -1185,6 +1185,190 @@ function canEndJokerTurnEarly(jokerState) {
     return hasMovedAtLeast1Space && jokerState.canEndTurn;
 }
 
+// Enhanced early turn completion functionality
+
+// Get available early completion options for joker
+function getJokerEarlyCompletionOptions(jokerState) {
+    console.log('Getting joker early completion options');
+    
+    try {
+        if (!jokerState || !jokerState.isActive) {
+            return {
+                canComplete: false,
+                reason: 'No active joker movement'
+            };
+        }
+        
+        const spacesMoved = jokerState.movePath.length - 1;
+        const canCompleteEarly = spacesMoved >= 1 && spacesMoved < 4;
+        const mustComplete = jokerState.remainingDistance <= 0;
+        
+        return {
+            canComplete: canCompleteEarly || mustComplete,
+            canCompleteEarly: canCompleteEarly,
+            mustComplete: mustComplete,
+            spacesMoved: spacesMoved,
+            remainingDistance: jokerState.remainingDistance,
+            validDistances: getValidJokerDistances(spacesMoved),
+            reason: canCompleteEarly ? 
+                `Can end turn after ${spacesMoved} space${spacesMoved !== 1 ? 's' : ''}` :
+                mustComplete ? 
+                    'Must end turn (maximum distance reached)' :
+                    'Must move at least 1 space before ending turn'
+        };
+    } catch (error) {
+        console.error('Error getting early completion options:', error.message);
+        return {
+            canComplete: false,
+            reason: `Error: ${error.message}`
+        };
+    }
+}
+
+// Get valid distance options for joker at current state
+function getValidJokerDistances(currentDistance) {
+    const validDistances = [];
+    
+    // If already moved, can complete at current distance
+    if (currentDistance >= 1 && currentDistance <= 4) {
+        validDistances.push(currentDistance);
+    }
+    
+    // Can continue moving if not at maximum
+    if (currentDistance < 4) {
+        for (let distance = currentDistance + 1; distance <= 4; distance++) {
+            validDistances.push(distance);
+        }
+    }
+    
+    return validDistances;
+}
+
+// Check if joker has valid moves remaining
+function hasValidJokerMovesRemaining(jokerState) {
+    if (!jokerState || !jokerState.isActive || jokerState.remainingDistance <= 0) {
+        return false;
+    }
+    
+    const validNextSteps = getValidJokerMoveSteps(jokerState);
+    return validNextSteps.length > 0;
+}
+
+// Force early completion when no valid moves remain
+function checkForForcedJokerCompletion(jokerState) {
+    console.log('Checking for forced joker completion');
+    
+    try {
+        if (!jokerState || !jokerState.isActive) {
+            return {
+                forced: false,
+                reason: 'No active joker movement'
+            };
+        }
+        
+        const spacesMoved = jokerState.movePath.length - 1;
+        const hasMovesRemaining = hasValidJokerMovesRemaining(jokerState);
+        const atMaxDistance = jokerState.remainingDistance <= 0;
+        
+        // Must complete if at max distance or no valid moves
+        const forcedCompletion = atMaxDistance || (!hasMovesRemaining && spacesMoved >= 1);
+        
+        return {
+            forced: forcedCompletion,
+            reason: atMaxDistance ? 
+                'Maximum distance reached (4 spaces)' :
+                !hasMovesRemaining ? 
+                    'No valid moves remaining' :
+                    'Can continue movement or complete turn',
+            spacesMoved: spacesMoved,
+            hasMovesRemaining: hasMovesRemaining,
+            atMaxDistance: atMaxDistance
+        };
+    } catch (error) {
+        console.error('Error checking forced completion:', error.message);
+        return {
+            forced: true,
+            reason: `Error occurred: ${error.message}`
+        };
+    }
+}
+
+// Initiate early turn completion
+function initiateJokerEarlyCompletion() {
+    console.log('Initiating joker early completion');
+    
+    try {
+        if (!gameState.jokerMoveState || !gameState.jokerMoveState.isActive) {
+            return {
+                success: false,
+                reason: 'No active joker movement to complete'
+            };
+        }
+        
+        const jokerState = gameState.jokerMoveState;
+        const options = getJokerEarlyCompletionOptions(jokerState);
+        
+        if (!options.canComplete) {
+            return {
+                success: false,
+                reason: options.reason
+            };
+        }
+        
+        // Complete the movement
+        const completion = completeJokerMovement();
+        
+        if (completion.success) {
+            console.log('Joker early completion successful:', completion.summary);
+            return {
+                success: true,
+                summary: completion.summary,
+                earlyCompletion: true,
+                spacesMoved: completion.summary.spacesMoved
+            };
+        } else {
+            return {
+                success: false,
+                reason: completion.reason
+            };
+        }
+    } catch (error) {
+        console.error('Error during early completion:', error.message);
+        return {
+            success: false,
+            reason: `Early completion error: ${error.message}`
+        };
+    }
+}
+
+// Get turn completion UI state for joker
+function getJokerTurnCompletionUIState(jokerState) {
+    if (!jokerState || !jokerState.isActive) {
+        return {
+            showCompletionOption: false,
+            completionRequired: false,
+            completionText: ''
+        };
+    }
+    
+    const spacesMoved = jokerState.movePath.length - 1;
+    const options = getJokerEarlyCompletionOptions(jokerState);
+    const forced = checkForForcedJokerCompletion(jokerState);
+    
+    return {
+        showCompletionOption: options.canComplete,
+        completionRequired: forced.forced,
+        completionText: forced.forced ? 
+            `End Turn (${forced.reason})` :
+            options.canCompleteEarly ?
+                `End Turn (${spacesMoved} space${spacesMoved !== 1 ? 's' : ''})` :
+                'Complete Move',
+        canContinue: !forced.forced && jokerState.remainingDistance > 0,
+        remainingMoves: jokerState.remainingDistance,
+        spacesMoved: spacesMoved
+    };
+}
+
 // Get joker movement summary
 function getJokerMovementSummary(jokerState) {
     if (!jokerState) {
@@ -1268,4 +1452,600 @@ function cancelJokerMovement() {
     }
     
     return null;
+}
+
+// Joker Movement Path Validation (Task 2.4)
+
+// Validate that joker movement path follows all numbered card rules
+function validateJokerMovementPath(jokerState) {
+    console.log('Validating joker movement path against numbered card rules');
+    
+    try {
+        if (!jokerState || !jokerState.isActive) {
+            return {
+                valid: false,
+                reason: 'No active joker movement to validate'
+            };
+        }
+        
+        const path = jokerState.movePath;
+        const distance = path.length - 1;
+        
+        if (distance < 1) {
+            return {
+                valid: false,
+                reason: 'Joker must move at least 1 space'
+            };
+        }
+        
+        if (distance > 4) {
+            return {
+                valid: false,
+                reason: 'Joker cannot move more than 4 spaces'
+            };
+        }
+        
+        // Run all standard movement validations
+        const validations = {
+            orthogonal: validateOrthogonalPath(path),
+            noRevisits: validateNoRevisitedCards(path),
+            notOnStarting: validateNotEndingOnStartingCard(jokerState.startingPosition, jokerState.currentPosition),
+            notOnOccupied: validateNotEndingOnOccupiedPosition(
+                jokerState.currentPosition, 
+                gameState.board, 
+                gameState.players, 
+                jokerState.playerId
+            )
+        };
+        
+        // Check if all validations pass
+        const allValid = Object.values(validations).every(v => v.valid);
+        
+        // Collect any failed validation reasons
+        const failedReasons = Object.entries(validations)
+            .filter(([, result]) => !result.valid)
+            .map(([validationType, result]) => `${validationType}: ${result.reason}`);
+        
+        return {
+            valid: allValid,
+            distance: distance,
+            validations: validations,
+            reason: allValid ? 
+                `Joker path valid: ${distance} spaces, all rules followed` :
+                `Joker path invalid: ${failedReasons.join('; ')}`
+        };
+    } catch (error) {
+        console.error('Error validating joker movement path:', error.message);
+        return {
+            valid: false,
+            reason: `Validation error: ${error.message}`
+        };
+    }
+}
+
+// Validate joker movement against specific distance like numbered cards
+function validateJokerMovementAsFixedDistance(jokerState, targetDistance) {
+    console.log(`Validating joker movement as fixed distance: ${targetDistance}`);
+    
+    try {
+        if (!jokerState || !jokerState.isActive) {
+            return {
+                valid: false,
+                reason: 'No active joker movement to validate'
+            };
+        }
+        
+        const actualDistance = jokerState.movePath.length - 1;
+        
+        // Use the standard numbered card validation
+        const distanceValidation = validateMovementDistance('virtual-card', targetDistance);
+        if (!distanceValidation.valid) {
+            return distanceValidation;
+        }
+        
+        // Check if joker distance matches target
+        if (actualDistance !== targetDistance) {
+            return {
+                valid: false,
+                reason: `Joker moved ${actualDistance} spaces, but validating against ${targetDistance} spaces`
+            };
+        }
+        
+        // Run comprehensive path validation
+        const pathValidation = validateJokerMovementPath(jokerState);
+        
+        return {
+            valid: pathValidation.valid,
+            distance: actualDistance,
+            targetDistance: targetDistance,
+            pathValidation: pathValidation,
+            reason: pathValidation.valid ?
+                `Joker movement valid as ${targetDistance}-space move` :
+                pathValidation.reason
+        };
+    } catch (error) {
+        console.error('Error validating joker as fixed distance:', error.message);
+        return {
+            valid: false,
+            reason: `Validation error: ${error.message}`
+        };
+    }
+}
+
+// Compare joker movement to equivalent numbered card movement
+function compareJokerToNumberedCardMovement(jokerState) {
+    console.log('Comparing joker movement to equivalent numbered card movement');
+    
+    try {
+        if (!jokerState || !jokerState.isActive) {
+            return {
+                equivalent: false,
+                reason: 'No joker movement to compare'
+            };
+        }
+        
+        const distance = jokerState.movePath.length - 1;
+        
+        if (distance < 1 || distance > 4) {
+            return {
+                equivalent: false,
+                reason: `Invalid distance: ${distance}. Must be 1-4 for comparison.`
+            };
+        }
+        
+        // Create virtual numbered card type based on distance
+        const virtualCardType = distance === 1 ? 'A' : distance.toString();
+        
+        // Validate using numbered card logic
+        const numberedCardValidation = validateMoveOptimized(
+            jokerState.startingPosition,
+            jokerState.movePath,
+            distance,
+            virtualCardType,
+            gameState.board,
+            gameState.players,
+            jokerState.playerId
+        );
+        
+        // Also validate using joker-specific logic
+        const jokerValidation = validateJokerMovementPath(jokerState);
+        
+        const bothValid = numberedCardValidation.valid && jokerValidation.valid;
+        
+        return {
+            equivalent: bothValid,
+            distance: distance,
+            virtualCardType: virtualCardType,
+            numberedCardValidation: numberedCardValidation,
+            jokerValidation: jokerValidation,
+            reason: bothValid ?
+                `Joker movement equivalent to ${virtualCardType} card movement` :
+                `Validation mismatch: numbered=${numberedCardValidation.valid}, joker=${jokerValidation.valid}`
+        };
+    } catch (error) {
+        console.error('Error comparing joker to numbered card:', error.message);
+        return {
+            equivalent: false,
+            reason: `Comparison error: ${error.message}`
+        };
+    }
+}
+
+// Validate joker movement step follows numbered card step rules
+function validateJokerStepAgainstNumberedCardRules(fromPosition, toPosition, jokerState) {
+    console.log('Validating joker step against numbered card rules');
+    
+    try {
+        // Use existing numbered card validation functions
+        const orthogonalCheck = isOrthogonalStep(fromPosition, toPosition);
+        const revisitCheck = isValidNextPosition(jokerState.movePath, toPosition);
+        const occupiedCheck = isPositionOccupied(toPosition, gameState.board, gameState.players);
+        const collapsedCheck = isCardCollapsed(toPosition, gameState.board);
+        
+        const stepValid = orthogonalCheck.valid && 
+                         revisitCheck.valid && 
+                         !occupiedCheck.occupied && 
+                         !collapsedCheck.collapsed;
+        
+        return {
+            valid: stepValid,
+            orthogonal: orthogonalCheck.valid,
+            notRevisited: revisitCheck.valid,
+            notOccupied: !occupiedCheck.occupied,
+            notCollapsed: !collapsedCheck.collapsed,
+            reason: stepValid ?
+                'Joker step follows all numbered card rules' :
+                `Invalid step: ${!orthogonalCheck.valid ? 'not orthogonal; ' : ''}${!revisitCheck.valid ? 'revisited position; ' : ''}${occupiedCheck.occupied ? 'position occupied; ' : ''}${collapsedCheck.collapsed ? 'card collapsed' : ''}`
+        };
+    } catch (error) {
+        console.error('Error validating joker step:', error.message);
+        return {
+            valid: false,
+            reason: `Step validation error: ${error.message}`
+        };
+    }
+}
+
+// Comprehensive joker movement validation using all numbered card rules
+function validateJokerMovementComprehensive(jokerState) {
+    console.log('Running comprehensive joker movement validation');
+    
+    try {
+        if (!jokerState || !jokerState.isActive) {
+            return {
+                valid: false,
+                reason: 'No active joker movement'
+            };
+        }
+        
+        const results = {
+            pathValidation: validateJokerMovementPath(jokerState),
+            numberedCardComparison: compareJokerToNumberedCardMovement(jokerState),
+            stepByStepValidation: { valid: true, invalidSteps: [] }
+        };
+        
+        // Validate each step individually
+        for (let i = 1; i < jokerState.movePath.length; i++) {
+            const stepValidation = validateJokerStepAgainstNumberedCardRules(
+                jokerState.movePath[i - 1],
+                jokerState.movePath[i],
+                jokerState
+            );
+            
+            if (!stepValidation.valid) {
+                results.stepByStepValidation.valid = false;
+                results.stepByStepValidation.invalidSteps.push({
+                    stepIndex: i,
+                    fromPosition: jokerState.movePath[i - 1],
+                    toPosition: jokerState.movePath[i],
+                    validation: stepValidation
+                });
+            }
+        }
+        
+        const overallValid = results.pathValidation.valid && 
+                           results.numberedCardComparison.equivalent && 
+                           results.stepByStepValidation.valid;
+        
+        return {
+            valid: overallValid,
+            results: results,
+            reason: overallValid ?
+                'Joker movement passes all numbered card rule validations' :
+                'Joker movement violates numbered card rules',
+            distance: jokerState.movePath.length - 1,
+            totalSteps: jokerState.movePath.length - 1
+        };
+    } catch (error) {
+        console.error('Error in comprehensive joker validation:', error.message);
+        return {
+            valid: false,
+            reason: `Comprehensive validation error: ${error.message}`
+        };
+    }
+}
+
+// Joker Movement State Transitions and Turn Completion (Task 2.5)
+
+// Update joker movement state after each step
+function updateJokerMovementState(targetPosition) {
+    console.log('Updating joker movement state');
+    
+    try {
+        if (!gameState.jokerMoveState || !gameState.jokerMoveState.isActive) {
+            throw new Error('No active joker movement state to update');
+        }
+        
+        const jokerState = gameState.jokerMoveState;
+        const stepResult = executeJokerMoveStep(targetPosition);
+        
+        if (!stepResult.success) {
+            return {
+                success: false,
+                reason: stepResult.reason,
+                state: 'step_failed'
+            };
+        }
+        
+        // Update player position on the board
+        const player = getCurrentPlayer();
+        if (player) {
+            movePlayerPawn(player.id, targetPosition.row, targetPosition.col);
+        }
+        
+        // Clear the validation cache since board state changed
+        clearValidationCache();
+        
+        // Determine next state
+        let nextState = 'in_progress';
+        if (jokerState.remainingDistance <= 0) {
+            nextState = 'must_complete';
+        } else if (!hasValidJokerMovesRemaining(jokerState)) {
+            nextState = 'forced_completion';
+        }
+        
+        return {
+            success: true,
+            newPosition: stepResult.newPosition,
+            remainingDistance: stepResult.remainingDistance,
+            spacesMoved: jokerState.movePath.length - 1,
+            state: nextState,
+            canEndTurn: stepResult.canEndTurn,
+            mustEndTurn: stepResult.mustEndTurn
+        };
+    } catch (error) {
+        console.error('Error updating joker movement state:', error.message);
+        return {
+            success: false,
+            reason: `State update error: ${error.message}`,
+            state: 'error'
+        };
+    }
+}
+
+// Handle joker turn completion and state cleanup
+function handleJokerTurnCompletion() {
+    console.log('Handling joker turn completion');
+    
+    try {
+        if (!gameState.jokerMoveState || !gameState.jokerMoveState.isActive) {
+            return {
+                success: false,
+                reason: 'No active joker movement to complete'
+            };
+        }
+        
+        const jokerState = gameState.jokerMoveState;
+        
+        // Validate final movement
+        const validation = validateJokerMovementComprehensive(jokerState);
+        if (!validation.valid) {
+            return {
+                success: false,
+                reason: `Invalid joker movement: ${validation.reason}`
+            };
+        }
+        
+        // Complete the movement
+        const completion = completeJokerMovement();
+        if (!completion.success) {
+            return {
+                success: false,
+                reason: completion.reason
+            };
+        }
+        
+        // Collapse the starting card
+        const startingPos = jokerState.startingPosition;
+        if (!collapseCard(startingPos.row, startingPos.col)) {
+            console.warn('Failed to collapse starting card after joker movement');
+        }
+        
+        // Update move history
+        addMoveToHistory(completion.moveRecord);
+        
+        // Switch to next player
+        switchToNextPlayer();
+        
+        // Check for game end
+        const gameEnded = checkGameEnd();
+        
+        console.log('Joker turn completed successfully:', {
+            spacesMoved: completion.summary.spacesMoved,
+            gameEnded: gameEnded
+        });
+        
+        return {
+            success: true,
+            summary: completion.summary,
+            gameEnded: gameEnded,
+            nextPlayer: getCurrentPlayer()?.id
+        };
+    } catch (error) {
+        console.error('Error handling joker turn completion:', error.message);
+        return {
+            success: false,
+            reason: `Turn completion error: ${error.message}`
+        };
+    }
+}
+
+// Transition joker movement state based on current conditions
+function transitionJokerMovementState() {
+    console.log('Transitioning joker movement state');
+    
+    try {
+        if (!gameState.jokerMoveState || !gameState.jokerMoveState.isActive) {
+            return {
+                state: 'inactive',
+                reason: 'No active joker movement'
+            };
+        }
+        
+        const jokerState = gameState.jokerMoveState;
+        const spacesMoved = jokerState.movePath.length - 1;
+        const hasValidMoves = hasValidJokerMovesRemaining(jokerState);
+        const atMaxDistance = jokerState.remainingDistance <= 0;
+        
+        // Determine current state based on conditions
+        if (spacesMoved === 0) {
+            return {
+                state: 'starting',
+                reason: 'Joker movement just started, no moves made yet',
+                canEndTurn: false,
+                mustContinue: true
+            };
+        } else if (atMaxDistance) {
+            return {
+                state: 'must_complete',
+                reason: 'Maximum distance reached, must end turn',
+                canEndTurn: true,
+                mustEndTurn: true
+            };
+        } else if (!hasValidMoves) {
+            return {
+                state: 'forced_completion',
+                reason: 'No valid moves remaining, must end turn',
+                canEndTurn: true,
+                mustEndTurn: true
+            };
+        } else if (spacesMoved >= 1 && spacesMoved < 4) {
+            return {
+                state: 'can_continue_or_complete',
+                reason: `Moved ${spacesMoved} space${spacesMoved !== 1 ? 's' : ''}, can continue or end turn`,
+                canEndTurn: true,
+                canContinue: true
+            };
+        } else {
+            return {
+                state: 'invalid',
+                reason: `Invalid joker state: ${spacesMoved} spaces moved`
+            };
+        }
+    } catch (error) {
+        console.error('Error transitioning joker movement state:', error.message);
+        return {
+            state: 'error',
+            reason: `State transition error: ${error.message}`
+        };
+    }
+}
+
+// Get current joker movement state information
+function getJokerMovementStateInfo() {
+    if (!gameState.jokerMoveState || !gameState.jokerMoveState.isActive) {
+        return {
+            active: false,
+            state: 'inactive'
+        };
+    }
+    
+    const jokerState = gameState.jokerMoveState;
+    const stateTransition = transitionJokerMovementState();
+    const completionOptions = getJokerEarlyCompletionOptions(jokerState);
+    const uiState = getJokerTurnCompletionUIState(jokerState);
+    
+    return {
+        active: true,
+        playerId: jokerState.playerId,
+        spacesMoved: jokerState.movePath.length - 1,
+        remainingDistance: jokerState.remainingDistance,
+        currentPosition: jokerState.currentPosition,
+        state: stateTransition.state,
+        stateReason: stateTransition.reason,
+        completionOptions: completionOptions,
+        uiState: uiState,
+        validNextSteps: getValidJokerMoveSteps(jokerState)
+    };
+}
+
+// Reset joker movement state (for cancellation or errors)
+function resetJokerMovementState() {
+    console.log('Resetting joker movement state');
+    
+    try {
+        if (gameState.jokerMoveState) {
+            const summary = getJokerMovementSummary(gameState.jokerMoveState);
+            gameState.jokerMoveState = null;
+            
+            // Clear validation cache
+            clearValidationCache();
+            
+            console.log('Joker movement state reset:', summary);
+            return {
+                success: true,
+                previousState: summary
+            };
+        }
+        
+        return {
+            success: true,
+            previousState: null
+        };
+    } catch (error) {
+        console.error('Error resetting joker movement state:', error.message);
+        return {
+            success: false,
+            reason: `Reset error: ${error.message}`
+        };
+    }
+}
+
+// Check if current player is on a joker and can start joker movement
+function canStartJokerMovement() {
+    try {
+        const currentPlayer = getCurrentPlayer();
+        if (!currentPlayer || !currentPlayer.isPlaced()) {
+            return {
+                canStart: false,
+                reason: 'No current player or player not placed'
+            };
+        }
+        
+        const position = currentPlayer.getPosition();
+        const card = getCardAt(position);
+        
+        if (!card) {
+            return {
+                canStart: false,
+                reason: 'No card found at player position'
+            };
+        }
+        
+        const isJoker = card.type === 'red-joker' || card.type === 'black-joker';
+        
+        return {
+            canStart: isJoker,
+            reason: isJoker ? 
+                `Player on ${card.type}, can start joker movement` :
+                `Player on ${card.type}, not a joker card`,
+            cardType: card.type,
+            position: position
+        };
+    } catch (error) {
+        console.error('Error checking if can start joker movement:', error.message);
+        return {
+            canStart: false,
+            reason: `Check error: ${error.message}`
+        };
+    }
+}
+
+// Start joker movement for current player
+function startJokerMovement() {
+    console.log('Starting joker movement for current player');
+    
+    try {
+        const canStart = canStartJokerMovement();
+        if (!canStart.canStart) {
+            return {
+                success: false,
+                reason: canStart.reason
+            };
+        }
+        
+        const currentPlayer = getCurrentPlayer();
+        const position = currentPlayer.getPosition();
+        
+        const jokerState = initializeJokerMovement(currentPlayer, position);
+        if (!jokerState) {
+            return {
+                success: false,
+                reason: 'Failed to initialize joker movement'
+            };
+        }
+        
+        console.log('Joker movement started successfully');
+        return {
+            success: true,
+            jokerState: jokerState,
+            stateInfo: getJokerMovementStateInfo()
+        };
+    } catch (error) {
+        console.error('Error starting joker movement:', error.message);
+        return {
+            success: false,
+            reason: `Start error: ${error.message}`
+        };
+    }
 }
