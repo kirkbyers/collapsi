@@ -26,7 +26,20 @@
     
     <!-- JavaScript files must be loaded in dependency order -->
     <script src="js/utils.js"></script>
-    <script src="js/movement.js"></script>
+    
+    <!-- Movement module - load in dependency order -->
+    <script src="js/movement/core/card-movement.js"></script>
+    <script src="js/movement/core/position-utils.js"></script>
+    <script src="js/movement/core/path-validation.js"></script>
+    <script src="js/movement/validation/ending-validator.js"></script>
+    <script src="js/movement/validation/optimized-validator.js"></script>
+    <script src="js/movement/validation/movement-validator.js"></script>
+    <script src="js/movement/joker/joker-state.js"></script>
+    <script src="js/movement/joker/joker-validator.js"></script>
+    <script src="js/movement/joker/joker-completion.js"></script>
+    <script src="js/movement/visualization/path-highlighter.js"></script>
+    <script src="js/movement/index.js"></script>
+    
     <script src="js/board.js"></script>
     <script src="js/player.js"></script>
     <script src="js/ui.js"></script>

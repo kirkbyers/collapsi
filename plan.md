@@ -85,26 +85,29 @@ Collapsi is a 2-player strategy game where players move pawns on a collapsing 4x
 - Manually test different board configurations
 - Verify collapsed cards show visually different state
 
-### Phase 3: Player Movement Logic
-**Goal**: Implement core movement rules
+### Phase 3: Player Movement Logic ✅
+**Goal**: Implement core movement rules - **COMPLETED**
 
-**Step 3.1: Create js/player.js**
-- Define player object with position {row, col} and color
-- Function to place pawns on starting joker cards
-- Function to get current player's starting card value
-- Function to check if position is valid (in bounds, not collapsed, not occupied)
+**✅ Step 3.1: Modular Movement System**
+- Refactored 2,227-line movement.js into 11 focused modules
+- Core movement logic: card types, position utilities, path validation
+- Validation system: ending rules, optimized performance, main orchestration
+- Joker mechanics: state management, validation, turn completion
+- Visualization: path highlighting and movement preview
 
-**Step 3.2: Movement validation in js/game.js**
-- Function to check if move is orthogonal (only up/down/left/right)
-- Function to handle wraparound edges (modulo arithmetic)
-- Function to validate move distance matches starting card
-- Function to check path doesn't revisit cards
-- Store move history during single turn to prevent revisiting
+**✅ Step 3.2: Movement Validation Architecture**
+- Orthogonal movement validation with wraparound support
+- Card distance matching and path validation
+- Revisit prevention and move history tracking
+- Performance-optimized validation (<100ms target)
+- Comprehensive error handling and logging
 
-**Step 3.3: Joker movement**
-- Special case for joker cards (allow 1, 2, 3, or 4 spaces)
-- UI to let player choose distance when on joker
-- Validate chosen distance against available legal moves
+**✅ Step 3.3: Joker Movement System**
+- Flexible joker movement (1-4 spaces) with early completion
+- State machine for joker turn progression
+- Validation against numbered card rules
+- Interactive distance selection and path preview
+- Complete turn completion and cleanup logic
 
 ### Phase 4: Touch Controls & UI
 **Goal**: Make the game playable with touch
@@ -216,7 +219,22 @@ collapsi/
 │   └── mobile.css            # Mobile-specific styles
 ├── js/
 │   ├── game.js               # Core game logic and state management
-│   ├── movement.js           # Movement validation system (Phase 3)
+│   ├── movement/             # Modular movement validation system (Phase 3)
+│   │   ├── core/             # Core movement logic
+│   │   │   ├── card-movement.js    # Card type definitions and distance rules
+│   │   │   ├── position-utils.js   # Position calculations and wraparound
+│   │   │   └── path-validation.js  # Orthogonal path validation
+│   │   ├── validation/       # Movement validation systems
+│   │   │   ├── ending-validator.js     # Move ending rules and occupation
+│   │   │   ├── optimized-validator.js  # Performance-optimized validation
+│   │   │   └── movement-validator.js   # Main validation orchestration
+│   │   ├── joker/            # Joker movement mechanics
+│   │   │   ├── joker-state.js       # Joker state management
+│   │   │   ├── joker-validator.js   # Joker-specific validation rules
+│   │   │   └── joker-completion.js  # Joker turn completion logic
+│   │   ├── visualization/    # Path visualization and highlighting
+│   │   │   └── path-highlighter.js # Movement path visualization
+│   │   └── index.js          # Module documentation and exports
 │   ├── board.js              # Board management and validation
 │   ├── player.js             # Player/pawn logic
 │   ├── ui.js                 # UI interactions
@@ -239,9 +257,11 @@ collapsi/
 - ✅ 4x4 grid board with card shuffling
 - ✅ Orthogonal movement with wraparound
 - ✅ Card collapse mechanics
-- ✅ Legal move validation
+- ✅ Legal move validation (modular architecture)
 - ✅ Win condition detection
-- ✅ Joker wild card support
+- ✅ Joker wild card support (complete state machine)
+- ✅ Performance-optimized validation (<100ms)
+- ✅ Path visualization and movement preview
 
 ### UI/UX Features
 - ✅ Mobile-first responsive design
@@ -280,11 +300,35 @@ collapsi/
 - CSS Grid with fallbacks
 
 ## Development Timeline
-- **Week 1-2**: Core game engine and rules implementation
+- **Week 1-2**: ✅ Core game engine and movement system (COMPLETED)
 - **Week 3**: UI development and local multiplayer
 - **Week 4**: Mobile optimization and testing
 - **Week 5**: Backend development for online multiplayer
 - **Week 6**: Integration, testing, and deployment
+
+## Movement System Refactoring (Completed)
+
+The movement validation system has been successfully refactored from a monolithic 2,227-line file into a modular architecture:
+
+### Architecture Benefits
+- **Maintainability**: Each module has a single responsibility
+- **Testability**: Smaller, focused functions easier to unit test
+- **Debugging**: Issues are easier to locate in specific modules
+- **Performance**: Optimized validation with <100ms target
+- **Collaboration**: Multiple developers can work on different modules
+
+### Module Breakdown
+1. **Core Logic** (524 lines): Card movement, position utils, path validation
+2. **Validation System** (475 lines): Ending rules, optimization, orchestration
+3. **Joker Mechanics** (773 lines): State management, validation, completion
+4. **Visualization** (122 lines): Path highlighting and preview
+5. **Documentation** (102 lines): Module exports and information
+
+### Next Integration Steps
+- Connect modular movement system to UI layer
+- Implement touch controls using movement validation APIs
+- Integrate joker state machine with game loop
+- Add visual feedback using path visualization system
 
 ## Future Enhancements
 - Different board sizes (5x5, 6x6)
