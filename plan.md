@@ -215,12 +215,13 @@ collapsi/
 │   ├── board.css             # Game board specific styles
 │   └── mobile.css            # Mobile-specific styles
 ├── js/
-│   ├── game.js               # Core game logic
-│   ├── board.js              # Board management
+│   ├── game.js               # Core game logic and state management
+│   ├── movement.js           # Movement validation system (Phase 3)
+│   ├── board.js              # Board management and validation
 │   ├── player.js             # Player/pawn logic
 │   ├── ui.js                 # UI interactions
-│   ├── multiplayer.js        # Online multiplayer client
-│   └── utils.js              # Utility functions
+│   ├── utils.js              # Utility functions and helpers
+│   └── multiplayer.js        # Online multiplayer client
 ├── assets/
 │   ├── cards/                # Card images/sprites
 │   └── pawns/                # Pawn images
@@ -228,6 +229,7 @@ collapsi/
 │   ├── server.js             # WebSocket server
 │   ├── game-room.js          # Room management
 │   └── game-logic.js         # Server-side game validation
+├── tasks/                    # Development tasks and PRDs
 └── plan.md                   # This document
 ```
 

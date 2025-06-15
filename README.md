@@ -117,7 +117,12 @@ collapsi/
 │   ├── board.css          # Game board CSS Grid layout
 │   └── mobile.css         # Mobile-first responsive styles
 ├── js/
-│   └── game.js            # Placeholder for future phases
+│   ├── game.js            # Core game logic and state management
+│   ├── movement.js        # Movement validation system (Phase 3)
+│   ├── board.js           # Board management and validation
+│   ├── player.js          # Player/pawn logic
+│   ├── utils.js           # Utility functions and helpers
+│   └── ui.js              # UI interactions (future phases)
 ├── tasks/                 # Development tasks and PRDs
 ├── plan.md               # Overall implementation plan
 └── README.md             # This file

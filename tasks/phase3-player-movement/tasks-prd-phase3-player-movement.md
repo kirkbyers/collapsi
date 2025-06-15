@@ -2,11 +2,12 @@
 
 ## Relevant Files
 
-- `js/game.js` - Core game logic and state management, will contain movement validation functions
+- `js/game.js` - Core game logic and state management, turn control and win conditions
+- `js/movement.js` - Movement validation system with path checking and performance optimization  
+- `js/board.js` - Board management, coordinate system and card manipulation
 - `js/player.js` - Player/pawn logic, position tracking and movement mechanics
-- `js/board.js` - Board management, coordinate system and wraparound calculations
+- `js/utils.js` - Utility functions for deck shuffling, error logging, and localStorage
 - `js/ui.js` - UI interactions, path visualization and touch/click handlers
-- `js/utils.js` - Utility functions for pathfinding, validation helpers, and performance optimization
 - `css/board.css` - Visual feedback styles for movement paths, valid destinations, and wraparound indicators
 
 ### Notes
