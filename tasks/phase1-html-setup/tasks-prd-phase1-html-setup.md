@@ -17,14 +17,14 @@
 
 ## Tasks
 
-- [ ] 1.0 Create HTML Foundation Structure
-  - [ ] 1.1 Create `index.html` with HTML5 doctype and basic structure
-  - [ ] 1.2 Add mobile-optimized viewport meta tag (`width=device-width, initial-scale=1.0`)
-  - [ ] 1.3 Include semantic HTML elements: `<header>`, `<main>`, `<footer>`
-  - [ ] 1.4 Create div container with ID `game-board` inside main element
-  - [ ] 1.5 Add CSS file references: `css/styles.css`, `css/board.css`, `css/mobile.css`
-  - [ ] 1.6 Add placeholder JavaScript file reference: `js/game.js`
-  - [ ] 1.7 Create basic page title and header content for "Collapsi Game"
+- [x] 1.0 Create HTML Foundation Structure
+  - [x] 1.1 Create `index.html` with HTML5 doctype and basic structure
+  - [x] 1.2 Add mobile-optimized viewport meta tag (`width=device-width, initial-scale=1.0`)
+  - [x] 1.3 Include semantic HTML elements: `<header>`, `<main>`, `<footer>`
+  - [x] 1.4 Create div container with ID `game-board` inside main element
+  - [x] 1.5 Add CSS file references: `css/styles.css`, `css/board.css`, `css/mobile.css`
+  - [x] 1.6 Add placeholder JavaScript file reference: `js/game.js`
+  - [x] 1.7 Create basic page title and header content for "Collapsi Game"
 
 - [ ] 2.0 Implement CSS Architecture and Color System
   - [ ] 2.1 Create `css/styles.css` with CSS custom properties for color scheme
