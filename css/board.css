@@ -1,0 +1,61 @@
+/* Game Board Layout */
+#game-board {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(4, 1fr);
+  gap: 8px;
+  width: 100%;
+  max-width: 400px;
+  aspect-ratio: 1;
+  margin: 2rem auto;
+  padding: 16px;
+  background-color: rgba(0, 0, 0, 0.05);
+  border-radius: 8px;
+}
+
+/* Individual Card Styling */
+.card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60px;
+  border-radius: 6px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  aspect-ratio: 1;
+}
+
+/* Card Type Colors */
+.card.red-joker {
+  background-color: var(--red-joker);
+}
+
+.card.black-joker {
+  background-color: var(--black-joker);
+}
+
+.card.card-a {
+  background-color: var(--card-a);
+}
+
+.card.card-2 {
+  background-color: var(--card-2);
+}
+
+.card.card-3 {
+  background-color: var(--card-3);
+}
+
+.card.card-4 {
+  background-color: var(--card-4);
+}
+
+.card.collapsed {
+  background-color: var(--card-collapsed);
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.card.collapsed:hover {
+  transform: none;
+  box-shadow: none;
+}

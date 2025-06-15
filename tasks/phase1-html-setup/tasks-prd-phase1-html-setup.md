@@ -34,25 +34,25 @@
   - [x] 2.5 Create utility classes for text styling and card text size (1.5rem)
   - [x] 2.6 Implement hover effects for cards using CSS pseudo-classes
 
-- [ ] 3.0 Build 4x4 Game Board Layout
-  - [ ] 3.1 Create `css/board.css` with CSS Grid layout (`grid-template-columns: repeat(4, 1fr)`)
-  - [ ] 3.2 Set up 4x4 grid with proper rows (`grid-template-rows: repeat(4, 1fr)`)
-  - [ ] 3.3 Add 16 card div elements in `index.html` with placeholder content
-  - [ ] 3.4 Distribute cards: 1 Red Joker, 1 Black Joker, 4 A's, 4 2's, 4 3's, 2 4's
-  - [ ] 3.5 Apply distinct background colors to each card type using CSS custom properties
-  - [ ] 3.6 Set card dimensions with minimum 60px × 60px for touch accessibility
-  - [ ] 3.7 Add 8px gap between cards using CSS Grid `gap` property
-  - [ ] 3.8 Ensure cards maintain square aspect ratio
+- [x] 3.0 Build 4x4 Game Board Layout
+  - [x] 3.1 Create `css/board.css` with CSS Grid layout (`grid-template-columns: repeat(4, 1fr)`)
+  - [x] 3.2 Set up 4x4 grid with proper rows (`grid-template-rows: repeat(4, 1fr)`)
+  - [x] 3.3 Add 16 card div elements in `index.html` with placeholder content
+  - [x] 3.4 Distribute cards: 1 Red Joker, 1 Black Joker, 4 A's, 4 2's, 4 3's, 2 4's
+  - [x] 3.5 Apply distinct background colors to each card type using CSS custom properties
+  - [x] 3.6 Set card dimensions with minimum 60px × 60px for touch accessibility
+  - [x] 3.7 Add 8px gap between cards using CSS Grid `gap` property
+  - [x] 3.8 Ensure cards maintain square aspect ratio
 
-- [ ] 4.0 Implement Mobile-First Responsive Design
-  - [ ] 4.1 Create `css/mobile.css` with mobile-first base styles
-  - [ ] 4.2 Center game board horizontally with `margin: 0 auto`
-  - [ ] 4.3 Set maximum board width to 400px for desktop screens
-  - [ ] 4.4 Add 16px padding from screen edges for mobile spacing
-  - [ ] 4.5 Use relative units (vw, vh, rem) for responsive scaling
-  - [ ] 4.6 Add media queries for tablet (768px+) and desktop (1024px+) breakpoints
-  - [ ] 4.7 Test and adjust layout for portrait and landscape orientations
-  - [ ] 4.8 Ensure board scales appropriately on iPhone 11-15 screen sizes
+- [x] 4.0 Implement Mobile-First Responsive Design
+  - [x] 4.1 Create `css/mobile.css` with mobile-first base styles
+  - [x] 4.2 Center game board horizontally with `margin: 0 auto`
+  - [x] 4.3 Set maximum board width to 400px for desktop screens
+  - [x] 4.4 Add 16px padding from screen edges for mobile spacing
+  - [x] 4.5 Use relative units (vw, vh, rem) for responsive scaling
+  - [x] 4.6 Add media queries for tablet (768px+) and desktop (1024px+) breakpoints
+  - [x] 4.7 Test and adjust layout for portrait and landscape orientations
+  - [x] 4.8 Ensure board scales appropriately on iPhone 11-15 screen sizes
 
 - [ ] 5.0 Create Development Documentation and Setup Instructions
   - [ ] 5.1 Create `README.md` with project overview and setup instructions
