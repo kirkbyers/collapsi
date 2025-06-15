@@ -18,13 +18,13 @@
 
 ## Tasks
 
-- [ ] 1.0 Implement Core Movement Validation System
-  - [ ] 1.1 Create function to validate exact movement distance matches starting card value
-  - [ ] 1.2 Implement orthogonal movement validation (up/down/left/right only)
-  - [ ] 1.3 Add wraparound edge calculation using modulo arithmetic
-  - [ ] 1.4 Create path validation to prevent revisiting cards during single turn
-  - [ ] 1.5 Add validation to prevent ending on starting card or occupied positions
-  - [ ] 1.6 Implement performance optimization to achieve <100ms validation time
+- [x] 1.0 Implement Core Movement Validation System
+  - [x] 1.1 Create function to validate exact movement distance matches starting card value
+  - [x] 1.2 Implement orthogonal movement validation (up/down/left/right only)
+  - [x] 1.3 Add wraparound edge calculation using modulo arithmetic
+  - [x] 1.4 Create path validation to prevent revisiting cards during single turn
+  - [x] 1.5 Add validation to prevent ending on starting card or occupied positions
+  - [x] 1.6 Implement performance optimization to achieve <100ms validation time
 
 - [ ] 2.0 Create Joker Card Movement Mechanics
   - [ ] 2.1 Implement joker distance selection (1-4 spaces) with incremental movement
