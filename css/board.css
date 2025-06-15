@@ -176,3 +176,170 @@
     transform: scale(0.95);
   }
 }
+
+/* Real-time Valid Destination Highlighting (Task 3.2) */
+
+/* Valid destination indicators */
+.card.valid-destination {
+  box-shadow: 0 0 0 3px #10b981; /* emerald-500 */
+  border-color: #10b981;
+  cursor: pointer;
+  position: relative;
+  z-index: 12;
+}
+
+.card.valid-destination::after {
+  content: '✓';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #10b981;
+  color: white;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.875rem;
+  font-weight: bold;
+  z-index: 15;
+  border: 2px solid white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.card.valid-destination:hover {
+  box-shadow: 0 0 0 3px #059669; /* emerald-600 */
+  border-color: #059669;
+  transform: translateY(-3px);
+}
+
+.card.valid-destination:hover::after {
+  background: #059669;
+  transform: translate(-50%, -50%) scale(1.1);
+}
+
+/* Invalid destination indicators (disabled state) */
+.card.invalid-destination {
+  opacity: 0.4;
+  cursor: not-allowed;
+  filter: grayscale(0.6);
+}
+
+.card.invalid-destination:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+/* Joker valid destinations (different styling) */
+.card.joker-valid-destination {
+  box-shadow: 0 0 0 3px #8b5cf6; /* violet-500 */
+  border-color: #8b5cf6;
+  cursor: pointer;
+  position: relative;
+  z-index: 12;
+}
+
+.card.joker-valid-destination::after {
+  content: '⭐';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #8b5cf6;
+  color: white;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  z-index: 15;
+  border: 2px solid white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.card.joker-valid-destination:hover {
+  box-shadow: 0 0 0 3px #7c3aed; /* violet-600 */
+  border-color: #7c3aed;
+  transform: translateY(-3px);
+}
+
+.card.joker-valid-destination:hover::after {
+  background: #7c3aed;
+  transform: translate(-50%, -50%) scale(1.1);
+}
+
+/* Distance indicators for numbered cards */
+.card.valid-destination.distance-1::before {
+  content: '1';
+}
+
+.card.valid-destination.distance-2::before {
+  content: '2';
+}
+
+.card.valid-destination.distance-3::before {
+  content: '3';
+}
+
+.card.valid-destination.distance-4::before {
+  content: '4';
+}
+
+.card.valid-destination::before {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  background: rgba(16, 185, 129, 0.9);
+  color: white;
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.625rem;
+  font-weight: bold;
+  z-index: 16;
+}
+
+/* Smooth transitions for destination highlighting */
+.card.valid-destination,
+.card.joker-valid-destination,
+.card.invalid-destination {
+  transition: all 0.15s ease-in-out;
+}
+
+/* Pulse animation for current valid destinations */
+.card.valid-destination.pulse,
+.card.joker-valid-destination.pulse {
+  animation: destinationPulse 1.5s infinite;
+}
+
+@keyframes destinationPulse {
+  0%, 100% {
+    box-shadow: 0 0 0 3px var(--destination-color, #10b981);
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgba(16, 185, 129, 0.4);
+  }
+}
+
+/* Immediate destination (one click away) */
+.card.immediate-destination {
+  box-shadow: 0 0 0 4px #f59e0b; /* amber-500 */
+  border-color: #f59e0b;
+}
+
+.card.immediate-destination::after {
+  content: '→';
+  background: #f59e0b;
+}
+
+.card.immediate-destination:hover {
+  box-shadow: 0 0 0 4px #d97706; /* amber-600 */
+  border-color: #d97706;
+}

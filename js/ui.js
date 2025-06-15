@@ -372,4 +372,343 @@ const pathVisualizationPerformance = {
     }
 };
 
-console.log('Path visualization functions loaded');
+// Real-time Valid Destination Highlighting (Task 3.2)
+
+// Clear all destination highlighting
+function clearDestinationHighlighting() {
+    console.log('Clearing destination highlighting');
+    
+    try {
+        const allCards = document.querySelectorAll('.card');
+        
+        allCards.forEach(card => {
+            card.classList.remove(
+                'valid-destination', 'invalid-destination', 
+                'joker-valid-destination', 'immediate-destination',
+                'distance-1', 'distance-2', 'distance-3', 'distance-4',
+                'pulse'
+            );
+        });
+        
+        console.log('Destination highlighting cleared');
+        return true;
+    } catch (error) {
+        console.error('Error clearing destination highlighting:', error.message);
+        return false;
+    }
+}
+
+// Get all valid destinations for current player
+function getValidDestinationsForCurrentPlayer() {
+    console.log('Getting valid destinations for current player');
+    
+    try {
+        const currentPlayer = getCurrentPlayer();
+        if (!currentPlayer || !currentPlayer.isPlaced()) {
+            return [];
+        }
+        
+        const position = currentPlayer.getPosition();
+        const card = getCardAt(position);
+        
+        if (!card) {
+            return [];
+        }
+        
+        // Check if joker movement is active
+        if (gameState.jokerMoveState && gameState.jokerMoveState.isActive) {
+            return getValidJokerDestinations();
+        }
+        
+        // Handle numbered card movement
+        const cardMovement = getCardMovementDistance(card.type);
+        if (cardMovement && cardMovement.type === 'fixed') {
+            return getValidNumberedCardDestinations(position, cardMovement.distance);
+        }
+        
+        return [];
+    } catch (error) {
+        console.error('Error getting valid destinations:', error.message);
+        return [];
+    }
+}
+
+// Get valid destinations for numbered cards
+function getValidNumberedCardDestinations(startPosition, distance) {
+    console.log(`Getting valid numbered card destinations: ${distance} spaces from ${JSON.stringify(startPosition)}`);
+    
+    try {
+        const validDestinations = [];
+        const directions = ['up', 'down', 'left', 'right'];
+        
+        // For each direction, calculate if we can move the required distance
+        directions.forEach(direction => {
+            let currentPos = { ...startPosition };
+            let validPath = true;
+            const path = [currentPos];
+            
+            // Try to move the exact distance in this direction
+            for (let step = 0; step < distance && validPath; step++) {
+                const nextPosResult = calculateWraparoundPosition(currentPos, direction);
+                
+                if (!nextPosResult) {
+                    validPath = false;
+                    break;
+                }
+                
+                const nextPos = nextPosResult.position;
+                
+                // Check if next position is valid (not collapsed, not occupied, not revisited)
+                const occupiedCheck = isPositionOccupied(nextPos, gameState.board, gameState.players);
+                const collapsedCheck = isCardCollapsed(nextPos, gameState.board);
+                const alreadyVisited = path.some(p => p.row === nextPos.row && p.col === nextPos.col);
+                
+                if (occupiedCheck.occupied || collapsedCheck.collapsed || alreadyVisited) {
+                    validPath = false;
+                    break;
+                }
+                
+                currentPos = nextPos;
+                path.push({ ...currentPos });
+            }
+            
+            // If we successfully moved the exact distance, this is a valid destination
+            if (validPath && path.length === distance + 1) {
+                const finalPosition = path[path.length - 1];
+                
+                // Ensure it's not the starting position
+                if (finalPosition.row !== startPosition.row || finalPosition.col !== startPosition.col) {
+                    validDestinations.push({
+                        position: finalPosition,
+                        distance: distance,
+                        direction: direction,
+                        path: path,
+                        isImmediate: distance === 1
+                    });
+                }
+            }
+        });
+        
+        console.log(`Found ${validDestinations.length} valid numbered card destinations`);
+        return validDestinations;
+    } catch (error) {
+        console.error('Error getting numbered card destinations:', error.message);
+        return [];
+    }
+}
+
+// Get valid destinations for joker movement
+function getValidJokerDestinations() {
+    console.log('Getting valid joker destinations');
+    
+    try {
+        if (!gameState.jokerMoveState || !gameState.jokerMoveState.isActive) {
+            return [];
+        }
+        
+        const jokerState = gameState.jokerMoveState;
+        const validSteps = getValidJokerMoveSteps(jokerState);
+        
+        return validSteps.map(step => ({
+            position: step.position,
+            direction: step.direction,
+            wrapped: step.wrapped,
+            isJoker: true,
+            remainingDistance: jokerState.remainingDistance,
+            isImmediate: true // Joker moves are always one step at a time
+        }));
+    } catch (error) {
+        console.error('Error getting joker destinations:', error.message);
+        return [];
+    }
+}
+
+// Highlight valid destinations on the board
+function highlightValidDestinations() {
+    console.log('Highlighting valid destinations');
+    
+    try {
+        pathVisualizationPerformance.startTracking();
+        
+        // Clear existing destination highlighting
+        clearDestinationHighlighting();
+        
+        // Get valid destinations
+        const validDestinations = getValidDestinationsForCurrentPlayer();
+        
+        if (validDestinations.length === 0) {
+            console.log('No valid destinations found');
+            return false;
+        }
+        
+        // Highlight each valid destination
+        validDestinations.forEach(destination => {
+            const cardElement = document.querySelector(`[data-row="${destination.position.row}"][data-col="${destination.position.col}"]`);
+            
+            if (cardElement) {
+                if (destination.isJoker) {
+                    cardElement.classList.add('joker-valid-destination');
+                } else {
+                    cardElement.classList.add('valid-destination');
+                    
+                    // Add distance indicator for numbered cards
+                    if (destination.distance) {
+                        cardElement.classList.add(`distance-${destination.distance}`);
+                    }
+                }
+                
+                // Add immediate destination styling
+                if (destination.isImmediate) {
+                    cardElement.classList.add('immediate-destination');
+                }
+                
+                // Add data attributes for easier interaction handling
+                cardElement.setAttribute('data-destination-distance', destination.distance || 'joker');
+                cardElement.setAttribute('data-destination-direction', destination.direction || '');
+                cardElement.setAttribute('data-is-joker-destination', destination.isJoker ? 'true' : 'false');
+            }
+        });
+        
+        const duration = pathVisualizationPerformance.endTracking();
+        console.log(`Highlighted ${validDestinations.length} valid destinations`);
+        
+        return { success: true, count: validDestinations.length, duration: duration };
+    } catch (error) {
+        console.error('Error highlighting valid destinations:', error.message);
+        pathVisualizationPerformance.endTracking();
+        return { success: false, error: error.message };
+    }
+}
+
+// Highlight invalid destinations (make them appear disabled)
+function highlightInvalidDestinations() {
+    console.log('Highlighting invalid destinations');
+    
+    try {
+        const allCards = document.querySelectorAll('.card');
+        
+        allCards.forEach(card => {
+            // If card doesn't have valid destination class, mark as invalid
+            if (!card.classList.contains('valid-destination') && 
+                !card.classList.contains('joker-valid-destination') &&
+                !card.classList.contains('immediate-destination')) {
+                
+                const row = parseInt(card.getAttribute('data-row'));
+                const col = parseInt(card.getAttribute('data-col'));
+                
+                // Don't mark current player position as invalid
+                const currentPlayer = getCurrentPlayer();
+                if (currentPlayer && currentPlayer.isPlaced()) {
+                    const playerPos = currentPlayer.getPosition();
+                    if (playerPos.row === row && playerPos.col === col) {
+                        return; // Skip current player position
+                    }
+                }
+                
+                card.classList.add('invalid-destination');
+            }
+        });
+        
+        return true;
+    } catch (error) {
+        console.error('Error highlighting invalid destinations:', error.message);
+        return false;
+    }
+}
+
+// Update real-time destination highlighting
+function updateDestinationHighlighting() {
+    console.log('Updating destination highlighting');
+    
+    try {
+        const result = highlightValidDestinations();
+        
+        if (result.success) {
+            // Also highlight invalid destinations for clarity
+            highlightInvalidDestinations();
+        }
+        
+        return result;
+    } catch (error) {
+        console.error('Error updating destination highlighting:', error.message);
+        return { success: false, error: error.message };
+    }
+}
+
+// Add pulse animation to valid destinations
+function addDestinationPulse() {
+    console.log('Adding pulse animation to destinations');
+    
+    try {
+        const validDestinations = document.querySelectorAll('.card.valid-destination, .card.joker-valid-destination');
+        
+        validDestinations.forEach(card => {
+            card.classList.add('pulse');
+        });
+        
+        return true;
+    } catch (error) {
+        console.error('Error adding destination pulse:', error.message);
+        return false;
+    }
+}
+
+// Remove pulse animation from destinations
+function removeDestinationPulse() {
+    console.log('Removing pulse animation from destinations');
+    
+    try {
+        const pulsedCards = document.querySelectorAll('.card.pulse');
+        
+        pulsedCards.forEach(card => {
+            card.classList.remove('pulse');
+        });
+        
+        return true;
+    } catch (error) {
+        console.error('Error removing destination pulse:', error.message);
+        return false;
+    }
+}
+
+// Check if a position is a currently highlighted valid destination
+function isValidDestination(row, col) {
+    try {
+        const cardElement = document.querySelector(`[data-row="${row}"][data-col="${col}"]`);
+        
+        if (!cardElement) {
+            return false;
+        }
+        
+        return cardElement.classList.contains('valid-destination') ||
+               cardElement.classList.contains('joker-valid-destination') ||
+               cardElement.classList.contains('immediate-destination');
+    } catch (error) {
+        console.error('Error checking if position is valid destination:', error.message);
+        return false;
+    }
+}
+
+// Get destination info for a specific position
+function getDestinationInfo(row, col) {
+    try {
+        const cardElement = document.querySelector(`[data-row="${row}"][data-col="${col}"]`);
+        
+        if (!cardElement || !isValidDestination(row, col)) {
+            return null;
+        }
+        
+        return {
+            position: { row, col },
+            distance: cardElement.getAttribute('data-destination-distance'),
+            direction: cardElement.getAttribute('data-destination-direction'),
+            isJoker: cardElement.getAttribute('data-is-joker-destination') === 'true',
+            isImmediate: cardElement.classList.contains('immediate-destination')
+        };
+    } catch (error) {
+        console.error('Error getting destination info:', error.message);
+        return null;
+    }
+}
+
+console.log('Path visualization and destination highlighting functions loaded');

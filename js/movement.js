@@ -2156,6 +2156,39 @@ function updatePathVisualization() {
     }
 }
 
+// Update both path and destination visualization
+function updateAllVisualization() {
+    console.log('Updating all visualization (paths and destinations)');
+    
+    try {
+        const startTime = performance.now();
+        
+        // Update path visualization
+        const pathResult = updatePathVisualization();
+        
+        // Update destination highlighting
+        const destResult = updateDestinationHighlighting();
+        
+        const totalDuration = performance.now() - startTime;
+        
+        console.log(`Total visualization update took ${totalDuration.toFixed(2)}ms`);
+        
+        if (totalDuration > 50) {
+            console.warn(`Visualization update exceeded 50ms target: ${totalDuration.toFixed(2)}ms`);
+        }
+        
+        return {
+            success: pathResult.success && destResult.success,
+            pathResult: pathResult,
+            destinationResult: destResult,
+            totalDuration: totalDuration
+        };
+    } catch (error) {
+        console.error('Error updating all visualization:', error.message);
+        return { success: false, error: error.message };
+    }
+}
+
 // Preview movement to a target position
 function previewMovementToPosition(targetPosition) {
     console.log('Previewing movement to position:', targetPosition);

@@ -36,7 +36,7 @@
 
 - [ ] 3.0 Build Path Visualization and UI Feedback
   - [x] 3.1 Add visual highlighting for complete movement paths
-  - [ ] 3.2 Implement real-time valid destination highlighting
+  - [x] 3.2 Implement real-time valid destination highlighting
   - [ ] 3.3 Create wraparound edge visual indicators (arrows or connecting lines)
   - [ ] 3.4 Add current pawn position highlighting
   - [ ] 3.5 Implement invalid move prevention through UI (disable/hide invalid squares)
