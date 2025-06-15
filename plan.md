@@ -1,0 +1,295 @@
+# Collapsi Digital Game Implementation Plan
+
+## Game Overview
+Collapsi is a 2-player strategy game where players move pawns on a collapsing 4x4 card grid. The last player able to make a legal move wins.
+
+## Core Game Mechanics
+- **Board**: 4x4 grid of cards (Red Joker, Black Joker, 4×A, 4×2, 4×3, 4×4)
+- **Players**: 2 players with colored pawns (Red starts on Red Joker, Blue on Black Joker)
+- **Movement**: Orthogonal movement (up/down/left/right) with wraparound edges
+- **Card Collapse**: Starting card flips face-down after each move (becomes impassable)
+- **Win Condition**: Last player able to complete a legal move wins
+
+## Technical Architecture
+
+### Frontend Stack
+- **HTML5**: Semantic structure and game board layout
+- **CSS3**: Mobile-first responsive design with Flexbox/Grid
+- **Vanilla JavaScript**: Game logic, state management, and UI interactions
+- **Web APIs**: localStorage for game state persistence
+
+### Mobile-First Design
+- **Target Devices**: iPhone 11 and up optimization
+- **Responsive Grid**: CSS Grid for 4x4 board that scales to screen size
+- **Touch Controls**: Touch/tap interactions for card selection and movement
+- **Viewport Optimization**: Proper meta tags and CSS for mobile devices
+- **Portrait/Landscape**: Adaptive layout for both orientations
+- **Accessibility**: Simple, bold colors with high contrast for accessibility
+
+### Multiplayer Architecture
+
+#### Local Multiplayer (Same Device)
+- Single device, alternating turns
+- Visual turn indicators
+- Touch/tap controls for both players
+
+#### Online Multiplayer (Room Codes)
+- **Near Real-time Communication**: WebSocket or HTTP polling for turn-based gameplay
+- **Room System**: 6-digit alphanumeric room codes
+- **Game State Sync**: Server-authoritative game state
+- **Offline Capability**: Game works without server after initial load
+- **Reconnection Logic**: Handle network interruptions gracefully
+
+## Implementation Phases (Junior Engineer Friendly)
+
+### Phase 1: Basic HTML Structure & Setup
+**Goal**: Get the basic game board visible on screen
+
+**Step 1.1: Create index.html**
+- Create basic HTML5 document with proper mobile viewport meta tag
+- Add CSS and JavaScript file references
+- Create div container for game board
+- Add basic semantic structure (header, main, footer)
+
+**Step 1.2: Create CSS files**
+- `css/styles.css` - Base styles and CSS variables for colors
+- `css/board.css` - Grid layout for 4x4 board
+- `css/mobile.css` - Mobile-specific responsive styles
+- Set up CSS Grid with 4 rows × 4 columns
+- Define color scheme using CSS custom properties
+
+**Step 1.3: Static board display**
+- Hard-code a sample 4x4 grid in HTML with div elements
+- Style cards with numbers (A, 2, 3, 4) and jokers
+- Make cards visually distinct (different background colors)
+- Test on iPhone 11+ screen sizes
+
+### Phase 2: JavaScript Game Data Structure
+**Goal**: Create the game state and card management
+
+**Step 2.1: Create js/game.js**
+- Define card deck array: `['red-joker', 'black-joker', 'A', 'A', 'A', 'A', '2', '2', '2', '2', '3', '3', '3', '3', '4', '4']`
+- Create shuffle function using Fisher-Yates algorithm
+- Create game state object with board array (4×4), player positions, current turn
+- Add function to initialize new game
+
+**Step 2.2: Create js/board.js**
+- Function to convert 1D deck array to 2D board (4×4)
+- Function to render board state to DOM
+- Function to get card at position (row, col)
+- Function to mark card as collapsed
+- Replace static HTML board with JavaScript-generated board
+
+**Step 2.3: Test data flow**
+- Add console.log statements to verify shuffle and board generation
+- Manually test different board configurations
+- Verify collapsed cards show visually different state
+
+### Phase 3: Player Movement Logic
+**Goal**: Implement core movement rules
+
+**Step 3.1: Create js/player.js**
+- Define player object with position {row, col} and color
+- Function to place pawns on starting joker cards
+- Function to get current player's starting card value
+- Function to check if position is valid (in bounds, not collapsed, not occupied)
+
+**Step 3.2: Movement validation in js/game.js**
+- Function to check if move is orthogonal (only up/down/left/right)
+- Function to handle wraparound edges (modulo arithmetic)
+- Function to validate move distance matches starting card
+- Function to check path doesn't revisit cards
+- Store move history during single turn to prevent revisiting
+
+**Step 3.3: Joker movement**
+- Special case for joker cards (allow 1, 2, 3, or 4 spaces)
+- UI to let player choose distance when on joker
+- Validate chosen distance against available legal moves
+
+### Phase 4: Touch Controls & UI
+**Goal**: Make the game playable with touch
+
+**Step 4.1: Basic touch handling in js/ui.js**
+- Add click/touch event listeners to board cards
+- Highlight currently selected pawn
+- Show possible moves when pawn is selected
+- Basic move preview (highlight path)
+
+**Step 4.2: Move execution**
+- Function to execute move (update game state)
+- Animate pawn movement with CSS transitions
+- Collapse starting card after move
+- Switch to next player's turn
+
+**Step 4.3: Game controls**
+- Add "New Game" button
+- Add turn indicator showing current player
+- Add move counter
+- Style all buttons for touch (minimum 44px)
+
+### Phase 5: Game Rules & Win Conditions
+**Goal**: Complete the game logic
+
+**Step 5.1: Legal move detection in js/game.js**
+- Function to get all possible moves for current player
+- Check each direction (up, down, left, right) for valid moves
+- Account for wraparound when checking moves
+- Return empty array if no legal moves exist
+
+**Step 5.2: Win condition**
+- Check for win after each turn
+- Display winner when game ends
+- Add game over screen with restart option
+- Prevent further moves after game ends
+
+**Step 5.3: Game state persistence**
+- Save game state to localStorage after each move
+- Restore game on page reload
+- Add "Resume Game" vs "New Game" options
+
+### Phase 6: Polish & Mobile Optimization
+**Goal**: Make it feel professional
+
+**Step 6.1: Animations in css/styles.css**
+- CSS transitions for pawn movement
+- Flip animation for card collapse
+- Smooth highlighting for legal moves
+- Loading states and micro-interactions
+
+**Step 6.2: Mobile optimization**
+- Test on various iPhone sizes (11, 12, 13, 14, 15)
+- Optimize touch targets and spacing
+- Handle orientation changes
+- Add haptic feedback (if supported)
+
+**Step 6.3: Accessibility & Visual Polish**
+- High contrast mode support
+- Screen reader labels
+- Keyboard navigation (optional)
+- Polish color scheme and typography
+
+### Phase 7: Online Multiplayer Foundation
+**Goal**: Basic room system
+
+**Step 7.1: Create simple Node.js server**
+- Install dependencies: `express`, `socket.io`
+- Basic HTTP server serving static files
+- WebSocket connection handling
+- Room creation with 6-digit codes
+
+**Step 7.2: Frontend websocket integration in js/multiplayer.js**
+- Connect to server on game start
+- Send/receive game state updates
+- Handle connection errors gracefully
+- Fall back to local multiplayer if server unavailable
+
+**Step 7.3: Room system**
+- UI for creating/joining rooms
+- Sync game state between players
+- Handle player disconnection
+- Basic lobby system
+
+### Phase 8: Testing & Deployment
+**Goal**: Ship it!
+
+**Step 8.1: Testing**
+- Test all game rules manually
+- Test on multiple devices
+- Test online multiplayer with 2 people
+- Fix any bugs found
+
+**Step 8.2: Deployment**
+- Host static files (Netlify, Vercel, or GitHub Pages)
+- Host Node.js server (Railway, Render, or Heroku)
+- Configure environment variables
+- Test production deployment
+
+**Each phase should take 1-2 days for a junior engineer. Total estimated time: 2-3 weeks.**
+
+## File Structure
+```
+collapsi/
+├── index.html                 # Main game page
+├── css/
+│   ├── styles.css            # Main stylesheet
+│   ├── board.css             # Game board specific styles
+│   └── mobile.css            # Mobile-specific styles
+├── js/
+│   ├── game.js               # Core game logic
+│   ├── board.js              # Board management
+│   ├── player.js             # Player/pawn logic
+│   ├── ui.js                 # UI interactions
+│   ├── multiplayer.js        # Online multiplayer client
+│   └── utils.js              # Utility functions
+├── assets/
+│   ├── cards/                # Card images/sprites
+│   └── pawns/                # Pawn images
+├── server/                   # Backend (Node.js)
+│   ├── server.js             # WebSocket server
+│   ├── game-room.js          # Room management
+│   └── game-logic.js         # Server-side game validation
+└── plan.md                   # This document
+```
+
+## Key Features
+
+### Game Features
+- ✅ 4x4 grid board with card shuffling
+- ✅ Orthogonal movement with wraparound
+- ✅ Card collapse mechanics
+- ✅ Legal move validation
+- ✅ Win condition detection
+- ✅ Joker wild card support
+
+### UI/UX Features
+- ✅ Mobile-first responsive design
+- ✅ Touch controls for movement
+- ✅ Visual feedback for legal moves
+- ✅ Turn indicators
+- ✅ Game state persistence
+- ✅ Animations for moves and card collapse
+- ✅ Simple, bold accessible color scheme
+
+### Multiplayer Features
+- ✅ Local same-device multiplayer
+- ✅ Online multiplayer with room codes
+- ✅ Near real-time game synchronization
+- ✅ Reconnection support
+- ✅ Offline capability after initial load
+
+## Technical Considerations
+
+### Performance
+- Efficient DOM manipulation for board updates
+- CSS transforms for smooth animations
+- Minimal network calls for online play
+- Local storage for offline capability
+
+### Accessibility
+- Keyboard navigation support
+- Screen reader compatibility
+- High contrast mode support
+- Clear visual indicators for game state
+
+### Browser Compatibility
+- Modern browser support (ES6+)
+- WebSocket fallback options
+- Touch event handling
+- CSS Grid with fallbacks
+
+## Development Timeline
+- **Week 1-2**: Core game engine and rules implementation
+- **Week 3**: UI development and local multiplayer
+- **Week 4**: Mobile optimization and testing
+- **Week 5**: Backend development for online multiplayer
+- **Week 6**: Integration, testing, and deployment
+
+## Future Enhancements
+- Different board sizes (5x5, 6x6)
+- More than 2 players
+- Tournament mode
+- AI opponent
+- Game replay/history features
+- Spectator mode
+- Game statistics and achievements
+- Custom card sets/themes

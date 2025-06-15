@@ -1,0 +1,51 @@
+Collapsi
+Invented by Mark S. Ball
+GAME OBJECTIVE
+Win the game by being the last player able to make a legal move.
+PLAYERS
+2 players
+CONTENTS
+Red Joker, Black Joker, A, A, A, A, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, and 2 Pawns (each pawn a different color or item)
+INTRODUCTION
+In Collapsi, you will move your pawn around the board each turn. The last player able to make a legal
+move wins the game.
+SETUP
+To determine who will be player one, one person secretly takes the red pawn in one hand and the blue
+pawn in the other. The opposite player now chooses a hand and will play as that color for the game. Red
+player goes first.
+CREATE THE BOARD
+Player 1 (red) shuffles the deck of cards and deals them out face=up to form a 4x4 grid. Each player places
+their pawns on their own starting joker card. Red begins on the red joker, and blue begins on the black
+joker.
+PLAY
+Red goes first. The number of spaces you must move is determined by the number on your starting card.
+A starting card is the card on which you begin your turn. On your first turn, your starting card is a joker.
+The joker is wild, and it allows you to move 1, 2, 3, or 4 spaces. It is the only card that allows you to choose
+how far you move. After you complete your move, flip your starting card face down. That card has
+collapsed, and it can no longer be passed through or landed on.
+From your second turn on, you must move a number of spaces equal to your starting card’s number. If
+your starting card is a 2, you must move two spaces. If it is a 4, you must move four spaces and so on.
+MOVEMENT
+In Collapsi, you move your pawn orthogonally: left, right, up, or down. You may move in alternating
+directions to complete your turn. For example, if you must move four spaces, you could move up 1, left 3.
+Or, you could move down 2, left 1, up 1.
+The board in Collapsi is unique in that it wraps around like an old school video game (think Pac-man or
+Asteroids). This means that you can “exit” the left side of the board and “enter” the right side in the same
+row or vice versa. You can also “exit” the bottom of the board and enter the top in the same column or vice
+versa.
+There are some things you cannot do in Collapsi:
+● You may not move through a card more than once.
+● You may not complete your move on your starting card.
+● You may not complete your move on a card that contains your opponent’s piece.
+CONTINUE PLAY
+Play like this continues until a player is unable to complete a move based on the starting card’s number.
+As soon as this occurs the game ends.
+WIN
+The last player able to complete a move wins the game.
+POSSIBLE VARIATIONS
+It is possible to play with a bigger board such as a 5x5, 6x6, etc. You could even change the board layout
+completely by using odd shapes rather than a square grid. More than two players could play as well. If
+you decide to play with a larger player count, do not forget to include designated starting cards for those
+additional players.
+THANK YOU - Cristina, Jacob
+
