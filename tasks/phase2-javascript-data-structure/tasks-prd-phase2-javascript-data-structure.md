@@ -3,7 +3,7 @@
 ## Relevant Files
 
 - `js/game.js` - Core game logic, state management, and game initialization functions (created: contains CARD_DECK array, shuffleDeck function, gameState object, initializeNewGame function, and convertDeckToBoard function)
-- `js/board.js` - Board management functions for rendering and card state manipulation
+- `js/board.js` - Board management functions for rendering and card state manipulation (created: contains renderBoardToDOM, updateCardDisplay, getCardAt, setCardAt, updateCardState, collapseCard, ensureResponsiveLayout, and helper functions)
 - `index.html` - Main HTML file that will be updated to include new JavaScript files
 - `css/styles.css` - May need updates for JavaScript-generated board elements
 - `css/board.css` - Board-specific styles that work with dynamic content
@@ -24,12 +24,12 @@
   - [x] 1.4 Build function to initialize new game with proper default values
   - [x] 1.5 Add function to convert 1D shuffled deck to 4×4 2D board array
 
-- [ ] 2.0 Implement Board Management and DOM Rendering System
-  - [ ] 2.1 Create function to render current board state to DOM, replacing static HTML
-  - [ ] 2.2 Build getter function to retrieve card state at specific board position (row, col)
-  - [ ] 2.3 Build setter function to update card state (including collapsed state)
-  - [ ] 2.4 Implement function to mark cards as collapsed (face-down) with visual distinction
-  - [ ] 2.5 Ensure JavaScript-generated board maintains responsive CSS Grid layout
+- [x] 2.0 Implement Board Management and DOM Rendering System
+  - [x] 2.1 Create function to render current board state to DOM, replacing static HTML
+  - [x] 2.2 Build getter function to retrieve card state at specific board position (row, col)
+  - [x] 2.3 Build setter function to update card state (including collapsed state)
+  - [x] 2.4 Implement function to mark cards as collapsed (face-down) with visual distinction
+  - [x] 2.5 Ensure JavaScript-generated board maintains responsive CSS Grid layout
 
 - [ ] 3.0 Build Player Management and Positioning System
   - [ ] 3.1 Create player objects with position {row, col} coordinates and color properties
