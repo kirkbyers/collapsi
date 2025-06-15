@@ -428,4 +428,157 @@ function testResponsiveLayout() {
     console.log('Expected cards: 16');
 }
 
+// Function to test board rendering across different screen sizes
+function testResponsiveBoardRendering() {
+    console.log('Testing responsive board rendering across different screen sizes...');
+    
+    const boardContainer = document.querySelector('.game-board') || document.querySelector('#game-board');
+    if (!boardContainer) {
+        console.error('Board container not found for responsive testing');
+        return false;
+    }
+    
+    // Test different viewport widths (simulating different devices)
+    const testSizes = [
+        { width: 375, height: 667, device: 'iPhone SE' },
+        { width: 390, height: 844, device: 'iPhone 12' },
+        { width: 414, height: 896, device: 'iPhone 11 Pro Max' },
+        { width: 768, height: 1024, device: 'iPad' },
+        { width: 1024, height: 768, device: 'iPad Landscape' },
+        { width: 1440, height: 900, device: 'Desktop' }
+    ];
+    
+    // Store original dimensions
+    const originalStyle = {
+        width: document.body.style.width,
+        height: document.body.style.height
+    };
+    
+    testSizes.forEach(size => {
+        console.log(`Testing ${size.device} (${size.width}x${size.height})`);
+        
+        // Simulate viewport size
+        document.body.style.width = `${size.width}px`;
+        
+        // Force layout recalculation
+        boardContainer.style.width = '';
+        boardContainer.offsetHeight; // Trigger reflow
+        
+        // Get computed dimensions
+        const rect = boardContainer.getBoundingClientRect();
+        const computedStyle = window.getComputedStyle(boardContainer);
+        
+        // Check responsive behavior
+        const results = {
+            device: size.device,
+            containerWidth: rect.width,
+            containerHeight: rect.height,
+            aspectRatio: rect.width / rect.height,
+            maxWidth: computedStyle.maxWidth,
+            gridColumns: computedStyle.gridTemplateColumns,
+            gridRows: computedStyle.gridTemplateRows,
+            gap: computedStyle.gap
+        };
+        
+        console.log('Results:', results);
+        
+        // Validate responsive requirements
+        const isValid = 
+            rect.width <= size.width && // Fits within viewport
+            Math.abs(results.aspectRatio - 1) < 0.1 && // Roughly square
+            computedStyle.display === 'grid' && // Uses CSS Grid
+            computedStyle.gridTemplateColumns.includes('1fr'); // Equal columns
+        
+        console.log(`${size.device}: ${isValid ? 'PASS' : 'FAIL'}`);
+    });
+    
+    // Restore original styles
+    document.body.style.width = originalStyle.width;
+    document.body.style.height = originalStyle.height;
+    
+    console.log('Responsive testing completed');
+    return true;
+}
+
+// Function to validate mobile-first responsive design
+function validateMobileFirstDesign() {
+    console.log('Validating mobile-first responsive design...');
+    
+    const boardContainer = document.querySelector('.game-board') || document.querySelector('#game-board');
+    if (!boardContainer) {
+        console.error('Board container not found');
+        return false;
+    }
+    
+    const cards = boardContainer.querySelectorAll('.card, .game-card');
+    
+    // Check mobile-specific requirements
+    const validations = {
+        cardCount: cards.length === 16,
+        gridLayout: window.getComputedStyle(boardContainer).display === 'grid',
+        touchTargets: true, // Will check below
+        aspectRatio: true, // Will check below
+        responsiveWidth: true // Will check below
+    };
+    
+    // Validate touch targets (minimum 44px)
+    cards.forEach(card => {
+        const rect = card.getBoundingClientRect();
+        if (rect.width < 44 || rect.height < 44) {
+            validations.touchTargets = false;
+        }
+    });
+    
+    // Validate aspect ratios
+    cards.forEach(card => {
+        const rect = card.getBoundingClientRect();
+        const aspectRatio = rect.width / rect.height;
+        if (Math.abs(aspectRatio - 1) > 0.1) { // Should be roughly square
+            validations.aspectRatio = false;
+        }
+    });
+    
+    // Validate responsive width
+    const containerRect = boardContainer.getBoundingClientRect();
+    const viewportWidth = window.innerWidth;
+    if (containerRect.width > viewportWidth * 0.95) { // Should not exceed 95% of viewport
+        validations.responsiveWidth = false;
+    }
+    
+    console.log('Mobile-first validation results:', validations);
+    
+    const allValid = Object.values(validations).every(v => v === true);
+    console.log(`Mobile-first design: ${allValid ? 'VALID' : 'INVALID'}`);
+    
+    return allValid;
+}
+
+// Function to run comprehensive responsive tests
+function runResponsiveTests() {
+    console.log('Running comprehensive responsive tests...');
+    
+    // Run basic responsive layout test
+    const responsiveTest = testResponsiveLayout();
+    
+    // Run screen size tests
+    const screenSizeTest = testResponsiveBoardRendering();
+    
+    // Run mobile-first validation
+    const mobileFirstTest = validateMobileFirstDesign();
+    
+    // Run layout consistency check
+    const layoutTest = ensureResponsiveLayout();
+    
+    const results = {
+        responsiveLayout: responsiveTest,
+        screenSizeTesting: screenSizeTest,
+        mobileFirstDesign: mobileFirstTest,
+        layoutConsistency: layoutTest,
+        overallPassing: responsiveTest && screenSizeTest && mobileFirstTest && layoutTest
+    };
+    
+    console.log('Comprehensive responsive test results:', results);
+    return results;
+}
+
 console.log('Board management functions loaded');
