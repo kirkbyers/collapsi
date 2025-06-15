@@ -26,13 +26,13 @@
   - [x] 1.6 Add placeholder JavaScript file reference: `js/game.js`
   - [x] 1.7 Create basic page title and header content for "Collapsi Game"
 
-- [ ] 2.0 Implement CSS Architecture and Color System
-  - [ ] 2.1 Create `css/styles.css` with CSS custom properties for color scheme
-  - [ ] 2.2 Define 8 color variables: red-joker, black-joker, card-a, card-2, card-3, card-4, card-collapsed, background
-  - [ ] 2.3 Set up base typography with system font stack (`-apple-system, BlinkMacSystemFont, sans-serif`)
-  - [ ] 2.4 Add basic reset/normalize styles for consistent cross-browser rendering
-  - [ ] 2.5 Create utility classes for text styling and card text size (1.5rem)
-  - [ ] 2.6 Implement hover effects for cards using CSS pseudo-classes
+- [x] 2.0 Implement CSS Architecture and Color System
+  - [x] 2.1 Create `css/styles.css` with CSS custom properties for color scheme
+  - [x] 2.2 Define 8 color variables: red-joker, black-joker, card-a, card-2, card-3, card-4, card-collapsed, background
+  - [x] 2.3 Set up base typography with system font stack (`-apple-system, BlinkMacSystemFont, sans-serif`)
+  - [x] 2.4 Add basic reset/normalize styles for consistent cross-browser rendering
+  - [x] 2.5 Create utility classes for text styling and card text size (1.5rem)
+  - [x] 2.6 Implement hover effects for cards using CSS pseudo-classes
 
 - [ ] 3.0 Build 4x4 Game Board Layout
   - [ ] 3.1 Create `css/board.css` with CSS Grid layout (`grid-template-columns: repeat(4, 1fr)`)
