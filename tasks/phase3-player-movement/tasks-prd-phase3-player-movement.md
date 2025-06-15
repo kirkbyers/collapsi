@@ -28,7 +28,7 @@
   - [x] 1.6 Implement performance optimization to achieve <100ms validation time
 
 - [ ] 2.0 Create Joker Card Movement Mechanics
-  - [ ] 2.1 Implement joker distance selection (1-4 spaces) with incremental movement
+  - [x] 2.1 Implement joker distance selection (1-4 spaces) with incremental movement
   - [ ] 2.2 Add early turn completion option for joker moves
   - [ ] 2.3 Create UI controls for joker movement distance selection
   - [ ] 2.4 Validate joker movement paths follow same rules as numbered cards
