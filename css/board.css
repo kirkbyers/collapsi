@@ -59,3 +59,120 @@
   transform: none;
   box-shadow: none;
 }
+
+/* Path Visualization Styles (Task 3.1) */
+
+/* Movement path highlighting */
+.card.path-start {
+  box-shadow: 0 0 0 4px #22c55e; /* green-500 */
+  border-color: #22c55e;
+  z-index: 15;
+}
+
+.card.path-step {
+  background: linear-gradient(135deg, var(--card-bg-color, #6b7280) 0%, #22c55e 100%);
+  border: 2px solid #22c55e;
+  box-shadow: 0 0 8px rgba(34, 197, 94, 0.3);
+  z-index: 10;
+  position: relative;
+}
+
+.card.path-end {
+  box-shadow: 0 0 0 4px #f59e0b; /* amber-500 */
+  border-color: #f59e0b;
+  background: linear-gradient(135deg, var(--card-bg-color, #6b7280) 0%, #f59e0b 100%);
+  z-index: 15;
+}
+
+/* Path step indicators */
+.card.path-step::after {
+  content: attr(data-step-number);
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: #22c55e;
+  color: white;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: bold;
+  z-index: 20;
+  border: 2px solid white;
+}
+
+/* Path direction indicators */
+.card.path-step.from-up::before {
+  content: '↓';
+}
+
+.card.path-step.from-down::before {
+  content: '↑';
+}
+
+.card.path-step.from-left::before {
+  content: '→';
+}
+
+.card.path-step.from-right::before {
+  content: '←';
+}
+
+.card.path-step::before {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  color: white;
+  font-size: 0.875rem;
+  font-weight: bold;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+  z-index: 25;
+}
+
+/* Smooth transitions for path visualization */
+.card.path-start,
+.card.path-step,
+.card.path-end {
+  transition: all 0.2s ease-in-out;
+}
+
+/* Joker path highlighting (different colors) */
+.card.joker-path-start {
+  box-shadow: 0 0 0 4px #8b5cf6; /* violet-500 */
+  border-color: #8b5cf6;
+}
+
+.card.joker-path-step {
+  background: linear-gradient(135deg, var(--card-bg-color, #6b7280) 0%, #8b5cf6 100%);
+  border: 2px solid #8b5cf6;
+  box-shadow: 0 0 8px rgba(139, 92, 246, 0.3);
+}
+
+.card.joker-path-step::after {
+  background: #8b5cf6;
+}
+
+.card.joker-path-end {
+  box-shadow: 0 0 0 4px #ec4899; /* pink-500 */
+  border-color: #ec4899;
+  background: linear-gradient(135deg, var(--card-bg-color, #6b7280) 0%, #ec4899 100%);
+}
+
+/* Path clearing animation */
+.card.path-clearing {
+  animation: pathClearFade 0.3s ease-out forwards;
+}
+
+@keyframes pathClearFade {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0.8;
+    transform: scale(0.95);
+  }
+}
