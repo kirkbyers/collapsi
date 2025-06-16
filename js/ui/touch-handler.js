@@ -386,11 +386,39 @@ function attemptMove(destinationInfo) {
  */
 function executeJokerMove(endPosition) {
     try {
-        // This would integrate with the joker move execution system
         console.log('Executing joker move to:', endPosition);
         
-        // For now, return success - this will be integrated with the actual joker system
-        return { success: true, type: 'joker', destination: endPosition };
+        // Check if there's an active joker movement state
+        const jokerStateInfo = getJokerMovementStateInfo();
+        
+        if (!jokerStateInfo.active) {
+            // Start a new joker movement if none is active
+            const startResult = startJokerMovement();
+            if (!startResult.success) {
+                return { success: false, error: startResult.reason };
+            }
+        }
+        
+        // Execute the joker move step
+        const moveResult = updateJokerMovementState(endPosition);
+        
+        if (moveResult.success) {
+            console.log('Joker move step executed:', moveResult);
+            
+            // Return success with additional joker state information
+            return {
+                success: true,
+                type: 'joker',
+                destination: endPosition,
+                spacesMoved: moveResult.spacesMoved,
+                remainingDistance: moveResult.remainingDistance,
+                state: moveResult.state,
+                canEndTurn: moveResult.canEndTurn,
+                mustEndTurn: moveResult.mustEndTurn
+            };
+        } else {
+            return { success: false, error: moveResult.reason };
+        }
     } catch (error) {
         console.error('Error executing joker move:', error);
         return { success: false, error: error.message };

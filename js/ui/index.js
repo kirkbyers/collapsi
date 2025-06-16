@@ -67,13 +67,26 @@ export class UI {
         };
 
         // Connect move preview to touch handler for move execution
-        this.movePreview.onMoveExecuted = () => {
+        this.movePreview.onMoveExecuted = (moveResult) => {
             this.touchHandler.clearSelection();
+            
+            // Update joker controls if this was a joker move
+            if (moveResult && moveResult.type === 'joker') {
+                this.jokerControls.updateFromGameState();
+            }
         };
 
         // Connect joker controls to touch handler
         this.jokerControls.onEndTurn = () => {
             this.touchHandler.clearSelection();
+        };
+
+        // Connect touch handler to joker controls for move updates
+        this.touchHandler.onMoveAttempted = (moveResult) => {
+            if (moveResult && moveResult.success && moveResult.type === 'joker') {
+                // Update joker controls after successful joker move
+                this.jokerControls.updateFromGameState();
+            }
         };
     }
 

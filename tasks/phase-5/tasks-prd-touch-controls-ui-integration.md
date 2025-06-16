@@ -48,14 +48,14 @@
   - [x] 3.6 Integrate with Phase 4 move execution system for actual move processing
   - [x] 3.7 Add visual feedback for move completion and board state updates
 
-- [ ] 4.0 Implement Joker-Specific UI Controls
-  - [ ] 4.1 Create `js/ui/joker-controls.js` for joker-specific interactions
-  - [ ] 4.2 Implement "End Turn" button that appears during joker moves
-  - [ ] 4.3 Add joker move progress indicator (e.g., "Move 2 of 4")
-  - [ ] 4.4 Create early turn completion logic when "End Turn" button is pressed
-  - [ ] 4.5 Implement automatic turn ending after 4 joker moves
-  - [ ] 4.6 Style "End Turn" button following design theme (simple, colorful, high contrast)
-  - [ ] 4.7 Integrate joker controls with existing joker state management system
+- [x] 4.0 Implement Joker-Specific UI Controls
+  - [x] 4.1 Create `js/ui/joker-controls.js` for joker-specific interactions
+  - [x] 4.2 Implement "End Turn" button that appears during joker moves
+  - [x] 4.3 Add joker move progress indicator (e.g., "Move 2 of 4")
+  - [x] 4.4 Create early turn completion logic when "End Turn" button is pressed
+  - [x] 4.5 Implement automatic turn ending after 4 joker moves
+  - [x] 4.6 Style "End Turn" button following design theme (simple, colorful, high contrast)
+  - [x] 4.7 Integrate joker controls with existing joker state management system
 
 - [ ] 5.0 Create Game Controls Interface with Hamburger Menu
   - [ ] 5.1 Create `js/ui/game-controls.js` for hamburger menu and game controls
