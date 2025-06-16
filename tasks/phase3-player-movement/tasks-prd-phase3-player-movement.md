@@ -14,6 +14,13 @@
   - `js/movement/joker/joker-validator.js` - Joker-specific validation rules
   - `js/movement/joker/joker-completion.js` - Joker turn completion and early completion
   - `js/movement/visualization/path-highlighter.js` - Path visualization and highlighting
+  - `js/movement/execution/` - **Move execution and game state management system**
+    - `js/movement/execution/move-executor.js` - Core move execution and validation
+    - `js/movement/execution/board-state-manager.js` - Board state updates and consistency validation
+    - `js/movement/execution/card-collapse-manager.js` - Card collapse mechanics and visual updates
+    - `js/movement/execution/turn-manager.js` - Turn switching and game flow control
+    - `js/movement/execution/rendering-integration.js` - Rendering system integration layer
+    - `js/movement/execution/index.js` - Execution module exports and high-level API
   - `js/movement/index.js` - Module documentation and exports
 - `js/board.js` - Board management, coordinate system and card manipulation
 - `js/player.js` - Player/pawn logic, position tracking and movement mechanics
@@ -28,6 +35,7 @@
 - ✅ Modulo arithmetic implemented for wraparound edge calculations
 - ✅ Comprehensive joker movement state machine with early completion
 - ✅ Path visualization system with real-time highlighting
+- ✅ **Complete move execution system implemented (6 modules, ~1,200 lines)**
 - Store move history in game state for debugging purposes
 - Prevent all invalid moves through proactive UI validation
 
@@ -80,12 +88,17 @@
   - [ ] 3.6 Ensure path visualization updates within 50ms of user interaction
     - ✅ Performance framework implemented in visualization module
 
-- [ ] 4.0 Implement Move Execution and Game State Updates
-  - [ ] 4.1 Create immediate move execution on valid destination selection
-  - [ ] 4.2 Update game board state after completed moves
-  - [ ] 4.3 Implement starting card collapse (flip face-down) after move completion
-  - [ ] 4.4 Add automatic turn switching after successful move execution
-  - [ ] 4.5 Integrate move execution with existing board rendering system
+- [x] 4.0 **Implement Move Execution and Game State Updates** ✅ **COMPLETE SYSTEM IMPLEMENTED**
+  - [x] 4.1 Create immediate move execution on valid destination selection
+    - ✅ Implemented in `js/movement/execution/move-executor.js`
+  - [x] 4.2 Update game board state after completed moves
+    - ✅ Implemented in `js/movement/execution/board-state-manager.js`
+  - [x] 4.3 Implement starting card collapse (flip face-down) after move completion
+    - ✅ Implemented in `js/movement/execution/card-collapse-manager.js`
+  - [x] 4.4 Add automatic turn switching after successful move execution
+    - ✅ Implemented in `js/movement/execution/turn-manager.js`
+  - [x] 4.5 Integrate move execution with existing board rendering system
+    - ✅ Implemented in `js/movement/execution/rendering-integration.js`
 
 - [x] 5.0 **Add Move History and Debugging Support** ✅ **INTEGRATED INTO MODULES**
   - [x] 5.1 Create move history data structure to store turn sequences
