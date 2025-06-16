@@ -7,6 +7,8 @@
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/board.css">
     <link rel="stylesheet" href="css/mobile.css">
+    <link rel="stylesheet" href="css/ui-components.css">
+    <link rel="stylesheet" href="css/animations.css">
 </head>
 <body>
     <header>
@@ -43,6 +45,7 @@
     <script src="js/board.js"></script>
     <script src="js/player.js"></script>
     <script src="js/ui.js"></script>
+    <script src="js/ui/touch-handler.js"></script>
     <script src="js/game.js"></script>
     
     <!-- Initialize the game when page loads -->
@@ -75,6 +78,48 @@
             
             // Set game status to playing
             gameState.gameStatus = 'playing';
+            
+            // Initialize touch handler for UI interactions
+            if (typeof initializeTouchHandler === 'function') {
+                initializeTouchHandler();
+                
+                // Set up callbacks for game state integration
+                if (typeof setOnPawnSelected === 'function') {
+                    setOnPawnSelected(function(position) {
+                        console.log('Pawn selected at:', position);
+                        // Trigger destination highlighting
+                        if (typeof updateDestinationHighlighting === 'function') {
+                            updateDestinationHighlighting();
+                        }
+                    });
+                }
+                
+                if (typeof setOnPawnDeselected === 'function') {
+                    setOnPawnDeselected(function() {
+                        console.log('Pawn deselected');
+                        // Clear destination highlighting
+                        if (typeof clearDestinationHighlighting === 'function') {
+                            clearDestinationHighlighting();
+                        }
+                    });
+                }
+                
+                if (typeof setOnMoveAttempted === 'function') {
+                    setOnMoveAttempted(function(moveResult) {
+                        console.log('Move attempted:', moveResult);
+                        // Handle successful moves - this will be expanded in later tasks
+                    });
+                }
+                
+                if (typeof setOnInvalidMove === 'function') {
+                    setOnInvalidMove(function(moveResult) {
+                        console.log('Invalid move attempted:', moveResult);
+                        // Handle invalid move feedback
+                    });
+                }
+                
+                console.log('Touch handler initialized with game state integration');
+            }
             
             console.log('Game initialized successfully!');
             console.log('Game state:', gameState);

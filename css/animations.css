@@ -1,0 +1,340 @@
+/**
+ * Animations CSS - CSS animations and transitions for game interactions
+ * Defines consistent animation timings and effects for the Collapsi game
+ */
+
+/* CSS Custom Properties for Animation Timing */
+:root {
+    --animation-fast: 0.15s;
+    --animation-normal: 0.25s;
+    --animation-slow: 0.5s;
+    --animation-move: 0.225s;
+    --animation-shake: 0.3s;
+    --animation-pulse: 1.2s;
+    --animation-glow: 1.5s;
+    
+    --easing-ease-out: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    --easing-ease-in-out: cubic-bezier(0.42, 0, 0.58, 1);
+    --easing-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+/* Pawn Movement Animation */
+.pawn-moving {
+    transition: transform var(--animation-move) var(--easing-ease-out);
+    z-index: 20;
+}
+
+.pawn-move-start {
+    transform: scale(1.1);
+}
+
+.pawn-move-end {
+    transform: scale(1);
+}
+
+/* Card Collapse Animation */
+.card-collapsing {
+    transition: all var(--animation-normal) var(--easing-ease-in-out);
+    transform: scale(0.9);
+    opacity: 0.6;
+    filter: grayscale(0.5);
+}
+
+.card.collapsed {
+    opacity: 0.3;
+    filter: grayscale(0.8);
+    transform: scale(0.95);
+    cursor: not-allowed;
+}
+
+/* Smooth Transitions for Interactive Elements */
+.card {
+    transition: 
+        transform var(--animation-fast) var(--easing-ease-out),
+        border-color var(--animation-fast) var(--easing-ease-out),
+        background-color var(--animation-fast) var(--easing-ease-out),
+        box-shadow var(--animation-fast) var(--easing-ease-out),
+        opacity var(--animation-fast) var(--easing-ease-out);
+}
+
+/* Hover Effects (for desktop testing) */
+@media (hover: hover) {
+    .card:hover {
+        transform: translateY(-1px);
+    }
+    
+    .card.valid-destination:hover,
+    .card.joker-valid-destination:hover {
+        transform: translateY(-2px) scale(1.02);
+    }
+}
+
+/* Touch Feedback Animation */
+.card.touched {
+    animation: touch-feedback var(--animation-fast) var(--easing-ease-out);
+}
+
+@keyframes touch-feedback {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(0.95);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* Loading/Thinking Animation */
+.thinking-animation {
+    position: relative;
+    overflow: hidden;
+}
+
+.thinking-animation::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.3),
+        transparent
+    );
+    animation: thinking-sweep 1.5s infinite;
+}
+
+@keyframes thinking-sweep {
+    0% {
+        left: -100%;
+    }
+    100% {
+        left: 100%;
+    }
+}
+
+/* Path Clearing Animation */
+.path-clearing {
+    animation: path-fade-out var(--animation-slow) var(--easing-ease-in-out) forwards;
+}
+
+@keyframes path-fade-out {
+    0% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+}
+
+/* Slide-in Animation for Menus */
+.slide-in-left {
+    animation: slide-in-left var(--animation-normal) var(--easing-ease-out);
+}
+
+@keyframes slide-in-left {
+    0% {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+    100% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.slide-out-left {
+    animation: slide-out-left var(--animation-normal) var(--easing-ease-out);
+}
+
+@keyframes slide-out-left {
+    0% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    100% {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+}
+
+/* Slide-in Animation for Joker Controls */
+.slide-in-bottom {
+    animation: slide-in-bottom var(--animation-normal) var(--easing-bounce);
+}
+
+@keyframes slide-in-bottom {
+    0% {
+        transform: translateX(-50%) translateY(100%);
+        opacity: 0;
+    }
+    100% {
+        transform: translateX(-50%) translateY(0);
+        opacity: 1;
+    }
+}
+
+.slide-out-bottom {
+    animation: slide-out-bottom var(--animation-normal) var(--easing-ease-out);
+}
+
+@keyframes slide-out-bottom {
+    0% {
+        transform: translateX(-50%) translateY(0);
+        opacity: 1;
+    }
+    100% {
+        transform: translateX(-50%) translateY(100%);
+        opacity: 0;
+    }
+}
+
+/* Stagger Animation for Path Highlighting */
+.path-step {
+    animation: path-appear var(--animation-normal) var(--easing-ease-out) backwards;
+}
+
+.path-step[data-step-number="1"] { animation-delay: 0.1s; }
+.path-step[data-step-number="2"] { animation-delay: 0.2s; }
+.path-step[data-step-number="3"] { animation-delay: 0.3s; }
+.path-step[data-step-number="4"] { animation-delay: 0.4s; }
+
+@keyframes path-appear {
+    0% {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Win/Lose Animation */
+.game-over-animation {
+    animation: game-over-pulse 2s var(--easing-ease-in-out) infinite;
+}
+
+@keyframes game-over-pulse {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.05);
+        opacity: 0.8;
+    }
+}
+
+/* New Game Animation */
+.new-game-animation {
+    animation: new-game-celebration 0.8s var(--easing-bounce);
+}
+
+@keyframes new-game-celebration {
+    0% {
+        transform: scale(0.8) rotate(-5deg);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(1.1) rotate(2deg);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(1) rotate(0deg);
+        opacity: 1;
+    }
+}
+
+/* Disable Animations for Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+    
+    .pulse,
+    .path-clearing,
+    .thinking-animation::after {
+        animation: none !important;
+    }
+}
+
+/* Performance Optimization */
+.card,
+.pawn-moving,
+.card-collapsing {
+    will-change: transform, opacity;
+}
+
+/* Ensure smooth animations on mobile */
+@media (max-width: 768px) {
+    .card {
+        backface-visibility: hidden;
+        perspective: 1000px;
+    }
+}
+
+/* Animation States for JavaScript Control */
+.animation-paused {
+    animation-play-state: paused;
+}
+
+.animation-running {
+    animation-play-state: running;
+}
+
+.no-transition {
+    transition: none !important;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .card.selected-pawn {
+        border-width: 4px;
+    }
+    
+    .card.valid-destination,
+    .card.joker-valid-destination {
+        border-width: 3px;
+    }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --shadow-color: rgba(0, 0, 0, 0.3);
+        --highlight-color: rgba(255, 255, 255, 0.1);
+    }
+    
+    .card.selected-pawn {
+        box-shadow: 0 0 12px rgba(255, 215, 0, 0.8);
+    }
+    
+    .hamburger-menu,
+    .turn-indicator,
+    .menu-dropdown,
+    .joker-controls {
+        background: rgba(42, 42, 42, 0.95);
+        border-color: #555;
+        color: #fff;
+    }
+    
+    .hamburger-line {
+        background: #fff;
+    }
+    
+    .menu-item:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+}

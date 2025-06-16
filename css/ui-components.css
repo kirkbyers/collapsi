@@ -1,0 +1,366 @@
+/**
+ * UI Components CSS - Touch controls and visual feedback styles
+ * Styles for pawn selection, move previews, and interactive elements
+ */
+
+/* Pawn Selection Styles */
+.card.selected-pawn {
+    border: 3px solid #FFD700;
+    box-shadow: 0 0 12px rgba(255, 215, 0, 0.6);
+    transform: scale(1.05);
+    z-index: 10;
+    position: relative;
+}
+
+.card.selected-pawn::after {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    border: 2px solid rgba(255, 215, 0, 0.4);
+    border-radius: inherit;
+    animation: pulse-glow 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes pulse-glow {
+    0% {
+        opacity: 0.4;
+        transform: scale(1);
+    }
+    100% {
+        opacity: 0.8;
+        transform: scale(1.02);
+    }
+}
+
+/* Valid Destination Highlighting */
+.card.valid-destination {
+    border: 2px solid #28A745;
+    background-color: rgba(40, 167, 69, 0.1);
+    cursor: pointer;
+    transition: all 0.15s ease-out;
+}
+
+.card.valid-destination:hover {
+    background-color: rgba(40, 167, 69, 0.2);
+    transform: translateY(-1px);
+}
+
+.card.joker-valid-destination {
+    border: 2px solid #17A2B8;
+    background-color: rgba(23, 162, 184, 0.1);
+    cursor: pointer;
+    transition: all 0.15s ease-out;
+}
+
+.card.joker-valid-destination:hover {
+    background-color: rgba(23, 162, 184, 0.2);
+    transform: translateY(-1px);
+}
+
+.card.immediate-destination {
+    border-width: 3px;
+    box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
+}
+
+/* Distance Indicators for Numbered Cards */
+.card.distance-1::before { content: '1'; }
+.card.distance-2::before { content: '2'; }
+.card.distance-3::before { content: '3'; }
+.card.distance-4::before { content: '4'; }
+
+.card[class*="distance-"]::before {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    background: rgba(40, 167, 69, 0.8);
+    color: white;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    font-size: 11px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 5;
+}
+
+/* Invalid Move Feedback */
+.card.invalid-selection-shake,
+.card.invalid-move-shake {
+    animation: shake-error 0.3s ease-in-out;
+    border: 2px solid #DC3545;
+    background-color: rgba(220, 53, 69, 0.1);
+}
+
+@keyframes shake-error {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-3px); }
+    75% { transform: translateX(3px); }
+}
+
+/* Touch Target Accessibility */
+.card {
+    min-width: 44px;
+    min-height: 44px;
+    position: relative;
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+}
+
+/* Prevent text selection during touch interactions */
+.game-board {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+}
+
+/* Pulse Animation for Valid Destinations */
+.card.pulse {
+    animation: destination-pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes destination-pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.4);
+    }
+    50% {
+        box-shadow: 0 0 0 6px rgba(40, 167, 69, 0.1);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(40, 167, 69, 0);
+    }
+}
+
+.card.joker-valid-destination.pulse {
+    animation: joker-destination-pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes joker-destination-pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(23, 162, 184, 0.4);
+    }
+    50% {
+        box-shadow: 0 0 0 6px rgba(23, 162, 184, 0.1);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(23, 162, 184, 0);
+    }
+}
+
+/* Invalid Destinations (Disabled Look) */
+.card.invalid-destination {
+    opacity: 0.5;
+    filter: grayscale(0.3);
+    cursor: not-allowed;
+}
+
+/* Turn Indicator Styles */
+.turn-indicator {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: rgba(255, 255, 255, 0.95);
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-weight: bold;
+    font-size: 14px;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    min-width: 44px;
+    text-align: center;
+}
+
+.turn-indicator.red-turn {
+    border-color: #DC3545;
+    color: #DC3545;
+}
+
+.turn-indicator.blue-turn {
+    border-color: #007BFF;
+    color: #007BFF;
+}
+
+/* Hamburger Menu Styles */
+.hamburger-menu {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    width: 44px;
+    height: 44px;
+    background: rgba(255, 255, 255, 0.95);
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.15s ease-out;
+}
+
+.hamburger-menu:hover {
+    background: rgba(255, 255, 255, 1);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.hamburger-line {
+    width: 20px;
+    height: 2px;
+    background: #333;
+    margin: 2px 0;
+    transition: all 0.15s ease-out;
+}
+
+.hamburger-menu.open .hamburger-line:nth-child(1) {
+    transform: rotate(45deg) translate(5px, 5px);
+}
+
+.hamburger-menu.open .hamburger-line:nth-child(2) {
+    opacity: 0;
+}
+
+.hamburger-menu.open .hamburger-line:nth-child(3) {
+    transform: rotate(-45deg) translate(7px, -6px);
+}
+
+/* Dropdown Menu */
+.menu-dropdown {
+    position: fixed;
+    top: 70px;
+    left: 20px;
+    min-width: 150px;
+    background: white;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    z-index: 99;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: all 0.2s ease-out;
+    pointer-events: none;
+}
+
+.menu-dropdown.visible {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+.menu-item {
+    padding: 12px 16px;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background-color 0.15s ease-out;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+}
+
+.menu-item:last-child {
+    border-bottom: none;
+}
+
+.menu-item:hover {
+    background-color: #f8f9fa;
+}
+
+/* Joker Controls */
+.joker-controls {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(255, 255, 255, 0.95);
+    border: 2px solid #17A2B8;
+    border-radius: 8px;
+    padding: 12px 20px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    z-index: 100;
+    opacity: 0;
+    transform: translateX(-50%) translateY(20px);
+    transition: all 0.25s ease-out;
+    pointer-events: none;
+}
+
+.joker-controls.visible {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+    pointer-events: auto;
+}
+
+.joker-progress {
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 8px;
+    text-align: center;
+}
+
+.end-turn-button {
+    background: #17A2B8;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    min-width: 44px;
+    min-height: 44px;
+    transition: all 0.15s ease-out;
+}
+
+.end-turn-button:hover {
+    background: #138496;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(19, 132, 150, 0.3);
+}
+
+.end-turn-button:active {
+    transform: translateY(0);
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+    .turn-indicator,
+    .hamburger-menu {
+        top: 10px;
+    }
+    
+    .hamburger-menu {
+        left: 10px;
+    }
+    
+    .turn-indicator {
+        right: 10px;
+    }
+    
+    .menu-dropdown {
+        top: 60px;
+        left: 10px;
+    }
+    
+    .joker-controls {
+        bottom: 10px;
+        left: 10px;
+        right: 10px;
+        transform: none;
+    }
+    
+    .joker-controls.visible {
+        transform: none;
+    }
+}
