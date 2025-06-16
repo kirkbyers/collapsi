@@ -118,7 +118,7 @@ export class UI {
         return {
             initialized: this.isInitialized,
             selectedPawn: this.touchHandler?.selectedPawn || null,
-            animationsActive: this.animationController?.hasActiveAnimations() || false,
+            animationsActive: this.animationController?.isRunning() || false,
             jokerControlsVisible: this.jokerControls?.isVisible() || false
         };
     }

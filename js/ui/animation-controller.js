@@ -3,7 +3,7 @@
  * Handles pawn movement, visual feedback, and animation queuing
  */
 
-class AnimationController {
+export class AnimationController {
     constructor() {
         this.animationQueue = [];
         this.isAnimating = false;

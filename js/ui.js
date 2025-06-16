@@ -415,13 +415,16 @@ function getValidDestinationsForCurrentPlayer() {
             return [];
         }
         
-        // Check if joker movement is active
-        if (gameState.jokerMoveState && gameState.jokerMoveState.isActive) {
+        // Handle card movement based on type
+        const cardMovement = getCardMovementDistance(card.type);
+        
+        // Check if joker movement is active OR if standing on a joker card
+        if ((gameState.jokerMoveState && gameState.jokerMoveState.isActive) || 
+            (cardMovement && cardMovement.type === 'joker')) {
             return getValidJokerDestinations();
         }
         
         // Handle numbered card movement
-        const cardMovement = getCardMovementDistance(card.type);
         if (cardMovement && cardMovement.type === 'fixed') {
             return getValidNumberedCardDestinations(position, cardMovement.distance);
         }
@@ -502,8 +505,20 @@ function getValidJokerDestinations() {
     console.log('Getting valid joker destinations');
     
     try {
-        if (!gameState.jokerMoveState || !gameState.jokerMoveState.isActive) {
+        const currentPlayer = getCurrentPlayer();
+        if (!currentPlayer || !currentPlayer.isPlaced()) {
             return [];
+        }
+        
+        const position = currentPlayer.getPosition();
+        
+        // Initialize joker movement if not already active
+        if (!gameState.jokerMoveState || !gameState.jokerMoveState.isActive) {
+            console.log('Initializing joker movement for first turn');
+            const jokerState = initializeJokerMovement(currentPlayer, position);
+            if (!jokerState) {
+                return [];
+            }
         }
         
         const jokerState = gameState.jokerMoveState;

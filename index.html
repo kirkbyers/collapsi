@@ -39,91 +39,103 @@
     <script src="js/movement/joker/joker-state.js"></script>
     <script src="js/movement/joker/joker-validator.js"></script>
     <script src="js/movement/joker/joker-completion.js"></script>
+    <script src="js/movement/execution/index.js"></script>
+    <script src="js/movement/execution/rendering-integration.js"></script>
+    <script src="js/movement/execution/turn-manager.js"></script>
+    <script src="js/movement/execution/board-state-manager.js"></script>
+    <script src="js/movement/execution/move-executor.js"></script>
     <script src="js/movement/visualization/path-highlighter.js"></script>
     <script src="js/movement/index.js"></script>
     
     <script src="js/board.js"></script>
     <script src="js/player.js"></script>
     <script src="js/ui.js"></script>
-    <script src="js/ui/touch-handler.js"></script>
     <script src="js/game.js"></script>
     
     <!-- Initialize the game when page loads -->
-    <script>
+    <script type="module">
+        // Import the new UI system
+        import { UI } from './js/ui/index.js';
+        
+        // Global game instance for UI integration
+        let gameInstance = null;
+        let uiSystem = null;
+        
         // Wait for DOM to be fully loaded
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', async function() {
             console.log('DOM loaded, initializing Collapsi game...');
             
-            // Initialize the game
-            const shuffledDeck = initializeNewGame();
-            
-            // Convert deck to board and set up game state
-            gameState.board = convertDeckToBoard(shuffledDeck);
-            
-            // Create and assign players
-            gameState.players = createPlayers();
-            setupPlayerJokerAssignments();
-            
-            // Place players on their starting jokers
-            placePlayersOnJokers();
-            
-            // Render the board to DOM
-            renderBoardToDOM(gameState.board);
-            
-            // Render player pawns
-            renderPlayerPawns();
-            
-            // Highlight current player
-            highlightCurrentPlayerPawn();
-            
-            // Set game status to playing
-            gameState.gameStatus = 'playing';
-            
-            // Initialize touch handler for UI interactions
-            if (typeof initializeTouchHandler === 'function') {
-                initializeTouchHandler();
+            try {
+                // Initialize the game
+                const shuffledDeck = initializeNewGame();
                 
-                // Set up callbacks for game state integration
-                if (typeof setOnPawnSelected === 'function') {
-                    setOnPawnSelected(function(position) {
-                        console.log('Pawn selected at:', position);
-                        // Trigger destination highlighting
-                        if (typeof updateDestinationHighlighting === 'function') {
-                            updateDestinationHighlighting();
-                        }
-                    });
-                }
+                // Convert deck to board and set up game state
+                gameState.board = convertDeckToBoard(shuffledDeck);
                 
-                if (typeof setOnPawnDeselected === 'function') {
-                    setOnPawnDeselected(function() {
-                        console.log('Pawn deselected');
-                        // Clear destination highlighting
-                        if (typeof clearDestinationHighlighting === 'function') {
-                            clearDestinationHighlighting();
-                        }
-                    });
-                }
+                // Create and assign players
+                gameState.players = createPlayers();
+                setupPlayerJokerAssignments();
                 
-                if (typeof setOnMoveAttempted === 'function') {
-                    setOnMoveAttempted(function(moveResult) {
-                        console.log('Move attempted:', moveResult);
-                        // Handle successful moves - this will be expanded in later tasks
-                    });
-                }
+                // Place players on their starting jokers
+                placePlayersOnJokers();
                 
-                if (typeof setOnInvalidMove === 'function') {
-                    setOnInvalidMove(function(moveResult) {
-                        console.log('Invalid move attempted:', moveResult);
-                        // Handle invalid move feedback
-                    });
-                }
+                // Render the board to DOM
+                renderBoardToDOM(gameState.board);
                 
-                console.log('Touch handler initialized with game state integration');
+                // Render player pawns
+                renderPlayerPawns();
+                
+                // Highlight current player
+                highlightCurrentPlayerPawn();
+                
+                // Set game status to playing
+                gameState.gameStatus = 'playing';
+                
+                // Create game instance object for UI integration
+                gameInstance = {
+                    board: gameState.board,
+                    players: gameState.players,
+                    currentPlayer: getCurrentPlayer(),
+                    gameStatus: gameState.gameStatus,
+                    resetGame: function() {
+                        // Reset game state
+                        const shuffledDeck = initializeNewGame();
+                        gameState.board = convertDeckToBoard(shuffledDeck);
+                        gameState.players = createPlayers();
+                        setupPlayerJokerAssignments();
+                        placePlayersOnJokers();
+                        gameState.gameStatus = 'playing';
+                        
+                        // Re-render everything
+                        renderBoardToDOM(gameState.board);
+                        renderPlayerPawns();
+                        highlightCurrentPlayerPawn();
+                        
+                        console.log('Game reset successfully');
+                    },
+                    renderBoard: function() {
+                        renderBoardToDOM(gameState.board);
+                        renderPlayerPawns();
+                        highlightCurrentPlayerPawn();
+                    }
+                };
+                
+                // Initialize the new UI system
+                uiSystem = new UI(gameInstance);
+                await uiSystem.initialize();
+                
+                console.log('Game and UI system initialized successfully!');
+                console.log('Game state:', gameState);
+                console.log('UI state:', uiSystem.getState());
+                
+            } catch (error) {
+                console.error('Error initializing game:', error);
             }
-            
-            console.log('Game initialized successfully!');
-            console.log('Game state:', gameState);
         });
+        
+        // Make UI system available globally for debugging
+        window.uiSystem = uiSystem;
+        window.gameInstance = gameInstance;
     </script>
 </body>
 </html>
