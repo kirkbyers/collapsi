@@ -93,6 +93,8 @@ This project intentionally uses no build tools, package managers, or frameworks.
 
 ## File Organization Patterns
 
+Files shouldn't exceed 600 lines. When a file exceeds 600 lines, break it out into a module where each file follows single responsibility principle.
+
 ### Movement System Modules
 Each module in `js/movement/` follows single responsibility principle:
 - Keep files under 300 lines for maintainability
