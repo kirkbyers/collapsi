@@ -83,9 +83,14 @@ export class UI {
 
         // Connect touch handler to joker controls for move updates
         this.touchHandler.onMoveAttempted = (moveResult) => {
-            if (moveResult && moveResult.success && moveResult.type === 'joker') {
-                // Update joker controls after successful joker move
-                this.jokerControls.updateFromGameState();
+            if (moveResult && moveResult.success) {
+                // Update game controls turn indicator after any successful move
+                this.gameControls.updateFromGameState();
+                
+                // Update joker controls if this was a joker move
+                if (moveResult.type === 'joker') {
+                    this.jokerControls.updateFromGameState();
+                }
             }
         };
     }

@@ -57,12 +57,12 @@
   - [x] 4.6 Style "End Turn" button following design theme (simple, colorful, high contrast)
   - [x] 4.7 Integrate joker controls with existing joker state management system
 
-- [ ] 5.0 Create Game Controls Interface with Hamburger Menu
-  - [ ] 5.1 Create `js/ui/game-controls.js` for hamburger menu and game controls
-  - [ ] 5.2 Implement hamburger menu with slide-in animation from left/top
-  - [ ] 5.3 Add "New Game" button within hamburger menu
-  - [ ] 5.4 Create turn indicator display in top-right of board area
-  - [ ] 5.5 Implement turn indicator updates showing current player (Red/Blue)
-  - [ ] 5.6 Add automatic menu closing on option selection and blur events
-  - [ ] 5.7 Style all UI components with 44px minimum touch targets for accessibility
-  - [ ] 5.8 Create `js/ui/index.js` to export all UI modules and handle initialization
+- [x] 5.0 Create Game Controls Interface with Hamburger Menu
+  - [x] 5.1 Create `js/ui/game-controls.js` for hamburger menu and game controls
+  - [x] 5.2 Implement hamburger menu with slide-in animation from left/top
+  - [x] 5.3 Add "New Game" button within hamburger menu
+  - [x] 5.4 Create turn indicator display in top-right of board area
+  - [x] 5.5 Implement turn indicator updates showing current player (Red/Blue)
+  - [x] 5.6 Add automatic menu closing on option selection and blur events
+  - [x] 5.7 Style all UI components with 44px minimum touch targets for accessibility
+  - [x] 5.8 Create `js/ui/index.js` to export all UI modules and handle initialization
