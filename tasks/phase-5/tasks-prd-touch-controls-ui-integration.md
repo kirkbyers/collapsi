@@ -30,14 +30,14 @@
   - [x] 1.6 Create deselection logic when tapping elsewhere on the board
   - [x] 1.7 Integrate touch handlers with existing game state management
 
-- [ ] 2.0 Create Visual Feedback and Animation System
-  - [ ] 2.1 Create `js/ui/animation-controller.js` for centralized animation management
-  - [ ] 2.2 Implement CSS transforms for smooth pawn movement (200-250ms duration)
-  - [ ] 2.3 Create shake animation for invalid move attempts (300ms, 3-4 shakes)
-  - [ ] 2.4 Add highlight transitions for selected pawns and valid destinations (150ms)
-  - [ ] 2.5 Create `css/animations.css` with CSS custom properties for consistent timing
-  - [ ] 2.6 Implement visual state updates for collapsed cards after moves
-  - [ ] 2.7 Add animation queuing system to prevent conflicting animations
+- [x] 2.0 Create Visual Feedback and Animation System
+  - [x] 2.1 Create `js/ui/animation-controller.js` for centralized animation management
+  - [x] 2.2 Implement CSS transforms for smooth pawn movement (200-250ms duration)
+  - [x] 2.3 Create shake animation for invalid move attempts (300ms, 3-4 shakes)
+  - [x] 2.4 Add highlight transitions for selected pawns and valid destinations (150ms)
+  - [x] 2.5 Create `css/animations.css` with CSS custom properties for consistent timing
+  - [x] 2.6 Implement visual state updates for collapsed cards after moves
+  - [x] 2.7 Add animation queuing system to prevent conflicting animations
 
 - [ ] 3.0 Build Step-by-Step Move Preview System
   - [ ] 3.1 Create `js/ui/move-preview.js` for destination highlighting logic

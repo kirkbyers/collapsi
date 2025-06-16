@@ -86,6 +86,38 @@
     }
 }
 
+/* Shake Animation for Invalid Moves */
+.shake-animation {
+    animation: shake var(--animation-shake) var(--easing-ease-in-out);
+}
+
+@keyframes shake {
+    0%, 100% {
+        transform: translateX(0);
+    }
+    12.5% {
+        transform: translateX(-8px);
+    }
+    25% {
+        transform: translateX(8px);
+    }
+    37.5% {
+        transform: translateX(-8px);
+    }
+    50% {
+        transform: translateX(8px);
+    }
+    62.5% {
+        transform: translateX(-4px);
+    }
+    75% {
+        transform: translateX(4px);
+    }
+    87.5% {
+        transform: translateX(-2px);
+    }
+}
+
 /* Loading/Thinking Animation */
 .thinking-animation {
     position: relative;
