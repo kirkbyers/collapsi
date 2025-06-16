@@ -359,8 +359,9 @@ export class TouchHandler {
      */
     isPawnAtPosition(row, col) {
         try {
-            // Access global function
-            const currentPlayer = window.getCurrentPlayer();
+            // Access global function through window or check if function exists
+            const getCurrentPlayerFn = window.getCurrentPlayer || getCurrentPlayer;
+            const currentPlayer = getCurrentPlayerFn();
             if (!currentPlayer || !currentPlayer.isPlaced()) {
                 return false;
             }
@@ -424,14 +425,15 @@ export class TouchHandler {
         try {
             console.log('Attempting move to:', destinationInfo);
             
-            const currentPlayer = window.getCurrentPlayer();
+            const getCurrentPlayerFn = window.getCurrentPlayer || getCurrentPlayer;
+            const currentPlayer = getCurrentPlayerFn();
             const startPosition = currentPlayer.getPosition();
             const endPosition = destinationInfo.position;
             
             // Use the movement execution system
             if (destinationInfo.isJoker) {
                 // Handle joker move
-                return this.executeJokerMove(endPosition);
+                return this.executeJokerMove(startPosition, endPosition);
             } else {
                 // Handle numbered card move
                 return this.executeNumberedCardMove(startPosition, endPosition, parseInt(destinationInfo.distance));
@@ -445,40 +447,154 @@ export class TouchHandler {
     /**
      * Execute a joker move
      */
-    executeJokerMove(endPosition) {
+    executeJokerMove(startPosition, endPosition) {
         try {
-            console.log('Executing joker move to:', endPosition);
+            console.log('Executing joker move from:', startPosition, 'to:', endPosition);
             
-            // Check if there's an active joker movement state using global functions
-            const jokerStateInfo = window.getJokerMovementStateInfo();
+            // Get current player and card type
+            const getCurrentPlayerFn = window.getCurrentPlayer || getCurrentPlayer;
+            const getCardAtPositionFn = window.getCardAtPosition || getCardAtPosition;
+            const currentPlayer = getCurrentPlayerFn();
+            const startingCard = getCardAtPositionFn(startPosition.row, startPosition.col);
+            
+            if (!currentPlayer || !startingCard) {
+                return { success: false, error: 'Invalid game state for joker move execution' };
+            }
+            
+            // Check if joker movement is already active, if not start it
+            const getJokerMovementStateInfoFn = window.getJokerMovementStateInfo || getJokerMovementStateInfo;
+            const jokerStateInfo = getJokerMovementStateInfoFn();
             
             if (!jokerStateInfo.active) {
-                // Start a new joker movement if none is active
-                const startResult = window.startJokerMovement();
+                const startJokerMovementFn = window.startJokerMovement || startJokerMovement;
+                const startResult = startJokerMovementFn();
                 if (!startResult.success) {
                     return { success: false, error: startResult.reason };
                 }
             }
             
-            // Execute the joker move step
-            const moveResult = window.updateJokerMovementState(endPosition);
+            // Update joker movement state BEFORE executing the move
+            const updateJokerMovementStateFn = window.updateJokerMovementState || updateJokerMovementState;
+            const jokerUpdateResult = updateJokerMovementStateFn(endPosition);
             
-            if (moveResult.success) {
-                console.log('Joker move step executed:', moveResult);
+            console.log('Joker update result:', jokerUpdateResult);
+            
+            if (!jokerUpdateResult.success) {
+                return { success: false, error: jokerUpdateResult.reason };
+            }
+            
+            // Check if this move completes the joker turn
+            // For now, automatically end turn after any joker move (simplified logic)
+            // TODO: Add UI controls for player to choose to continue or end turn
+            const spacesMoved = jokerUpdateResult.spacesMoved || 0;
+            const turnCompleted = jokerUpdateResult.mustEndTurn || spacesMoved >= 1;
+            
+            console.log(`Joker move: spacesMoved=${spacesMoved}, turnCompleted=${turnCompleted}, mustEndTurn=${jokerUpdateResult.mustEndTurn}`);
+            
+            if (turnCompleted) {
+                // For a completed joker turn, create proper move data
+                const jokerMoveData = {
+                    playerId: currentPlayer.id,
+                    startingPosition: startPosition,
+                    destinationPosition: endPosition,
+                    path: [startPosition, endPosition],
+                    distance: spacesMoved,
+                    cardType: startingCard.type,
+                    timestamp: new Date().toISOString()
+                };
                 
-                // Return success with additional joker state information
+                console.log('Completing joker turn with move data:', jokerMoveData);
+                
+                // Collapse starting card
+                let collapseResult = { success: false, reason: 'Function not found' };
+                try {
+                    if (typeof window !== 'undefined' && window.collapseStartingCardAfterMove) {
+                        collapseResult = window.collapseStartingCardAfterMove(startPosition, jokerMoveData);
+                    } else if (typeof collapseStartingCardAfterMove !== 'undefined') {
+                        collapseResult = collapseStartingCardAfterMove(startPosition, jokerMoveData);
+                    } else {
+                        console.warn('collapseStartingCardAfterMove function not found, using fallback');
+                        // Fallback: manually collapse the card
+                        const startingCard = getCardAtPositionFn(startPosition.row, startPosition.col);
+                        if (startingCard) {
+                            startingCard.collapsed = true;
+                            collapseResult = { success: true, reason: 'Manual collapse successful' };
+                        }
+                    }
+                } catch (error) {
+                    console.warn('Card collapse failed:', error);
+                }
+                
+                // Switch turns
+                let turnSwitchResult = { success: false, reason: 'Function not found' };
+                try {
+                    if (typeof window !== 'undefined' && window.switchTurnAfterMoveCompletion) {
+                        turnSwitchResult = window.switchTurnAfterMoveCompletion(jokerMoveData);
+                    } else if (typeof switchTurnAfterMoveCompletion !== 'undefined') {
+                        turnSwitchResult = switchTurnAfterMoveCompletion(jokerMoveData);
+                    } else {
+                        console.warn('switchTurnAfterMoveCompletion function not found, using fallback');
+                        // Fallback: manually switch turns
+                        gameState.currentPlayer = (gameState.currentPlayer + 1) % gameState.players.length;
+                        turnSwitchResult = { success: true, reason: 'Manual turn switch successful' };
+                    }
+                } catch (error) {
+                    console.warn('Turn switch failed:', error);
+                }
+                console.log('Turn switch result:', turnSwitchResult);
+                
+                // Re-render the board to update visual state
+                try {
+                    renderBoardToDOM(gameState.board);
+                    renderPlayerPawns();
+                    highlightCurrentPlayerPawn();
+                    console.log('Board re-rendered after joker move completion');
+                } catch (error) {
+                    console.warn('Board re-rendering failed:', error);
+                }
+                
                 return {
                     success: true,
                     type: 'joker',
                     destination: endPosition,
-                    spacesMoved: moveResult.spacesMoved,
-                    remainingDistance: moveResult.remainingDistance,
-                    state: moveResult.state,
-                    canEndTurn: moveResult.canEndTurn,
-                    mustEndTurn: moveResult.mustEndTurn
+                    spacesMoved: spacesMoved,
+                    remainingDistance: jokerUpdateResult.remainingDistance || 0,
+                    state: jokerUpdateResult.state || 'completed',
+                    canEndTurn: true,
+                    mustEndTurn: true,
+                    turnCompleted: true,
+                    moveData: jokerMoveData,
+                    collapsed: collapseResult.success,
+                    turnSwitched: turnSwitchResult.success
                 };
             } else {
-                return { success: false, error: moveResult.reason };
+                // Just move the player pawn for intermediate joker steps
+                const movePlayerPawnFn = window.movePlayerPawn || movePlayerPawn;
+                const moveSuccess = movePlayerPawnFn(currentPlayer.id, endPosition.row, endPosition.col);
+                
+                if (!moveSuccess) {
+                    return { success: false, error: 'Failed to move player pawn' };
+                }
+                
+                // Re-render to show the intermediate position
+                try {
+                    renderPlayerPawns();
+                    highlightCurrentPlayerPawn();
+                } catch (error) {
+                    console.warn('Player pawn re-rendering failed:', error);
+                }
+                
+                return {
+                    success: true,
+                    type: 'joker',
+                    destination: endPosition,
+                    spacesMoved: jokerUpdateResult.spacesMoved || 1,
+                    remainingDistance: jokerUpdateResult.remainingDistance || 0,
+                    state: jokerUpdateResult.state || 'in_progress',
+                    canEndTurn: jokerUpdateResult.canEndTurn || false,
+                    mustEndTurn: jokerUpdateResult.mustEndTurn || false,
+                    turnCompleted: false
+                };
             }
         } catch (error) {
             console.error('Error executing joker move:', error);
@@ -493,12 +609,152 @@ export class TouchHandler {
         try {
             console.log(`Executing numbered card move: ${distance} spaces from ${JSON.stringify(startPosition)} to ${JSON.stringify(endPosition)}`);
             
-            // This would integrate with the movement execution system
-            // For now, return success - this will be integrated with the actual movement system
-            return { success: true, type: 'numbered', distance, start: startPosition, destination: endPosition };
+            // Calculate path for the move
+            const path = this.calculateMovePath(startPosition, endPosition, distance);
+            if (!path) {
+                return { success: false, error: 'Could not calculate valid path' };
+            }
+            
+            // Get current player and card type
+            const getCurrentPlayerFn = window.getCurrentPlayer || getCurrentPlayer;
+            const getCardAtPositionFn = window.getCardAtPosition || getCardAtPosition;
+            const currentPlayer = getCurrentPlayerFn();
+            const startingCard = getCardAtPositionFn(startPosition.row, startPosition.col);
+            
+            if (!currentPlayer || !startingCard) {
+                return { success: false, error: 'Invalid game state for move execution' };
+            }
+            
+            // Execute the move using the movement execution system
+            const executeMoveToDestinationFn = window.executeMoveToDestination || executeMoveToDestination;
+            const moveResult = executeMoveToDestinationFn(
+                startPosition,
+                endPosition,
+                path,
+                startingCard.type,
+                gameState.board,
+                gameState.players,
+                currentPlayer.id
+            );
+            
+            if (moveResult.success) {
+                // Collapse starting card
+                let collapseResult = { success: false, reason: 'Function not found' };
+                try {
+                    if (typeof window !== 'undefined' && window.collapseStartingCardAfterMove) {
+                        collapseResult = window.collapseStartingCardAfterMove(startPosition, moveResult.moveData);
+                    } else if (typeof collapseStartingCardAfterMove !== 'undefined') {
+                        collapseResult = collapseStartingCardAfterMove(startPosition, moveResult.moveData);
+                    } else {
+                        // Fallback: manually collapse the card
+                        const startingCard = getCardAtPositionFn(startPosition.row, startPosition.col);
+                        if (startingCard) {
+                            startingCard.collapsed = true;
+                            collapseResult = { success: true, reason: 'Manual collapse successful' };
+                        }
+                    }
+                } catch (error) {
+                    console.warn('Card collapse failed:', error);
+                }
+                
+                // Switch turns
+                let turnSwitchResult = { success: false, reason: 'Function not found' };
+                try {
+                    if (typeof window !== 'undefined' && window.switchTurnAfterMoveCompletion) {
+                        turnSwitchResult = window.switchTurnAfterMoveCompletion(moveResult.moveData);
+                    } else if (typeof switchTurnAfterMoveCompletion !== 'undefined') {
+                        turnSwitchResult = switchTurnAfterMoveCompletion(moveResult.moveData);
+                    } else {
+                        // Fallback: manually switch turns
+                        gameState.currentPlayer = (gameState.currentPlayer + 1) % gameState.players.length;
+                        turnSwitchResult = { success: true, reason: 'Manual turn switch successful' };
+                    }
+                } catch (error) {
+                    console.warn('Turn switch failed:', error);
+                }
+                
+                // Re-render the board to update visual state
+                try {
+                    renderBoardToDOM(gameState.board);
+                    renderPlayerPawns();
+                    highlightCurrentPlayerPawn();
+                    console.log('Board re-rendered after move completion');
+                } catch (error) {
+                    console.warn('Board re-rendering failed:', error);
+                }
+                
+                return { 
+                    success: true, 
+                    type: 'numbered', 
+                    distance, 
+                    start: startPosition, 
+                    destination: endPosition,
+                    moveData: moveResult.moveData,
+                    collapsed: collapseResult.success,
+                    turnSwitched: turnSwitchResult.success
+                };
+            } else {
+                return { success: false, error: moveResult.reason };
+            }
         } catch (error) {
             console.error('Error executing numbered card move:', error);
             return { success: false, error: error.message };
+        }
+    }
+    
+    /**
+     * Calculate movement path between two positions
+     */
+    calculateMovePath(startPos, endPos, expectedDistance) {
+        try {
+            // Use simple path calculation for now
+            // This could be enhanced to use the sophisticated path finding algorithms
+            const path = [startPos];
+            let currentPos = { ...startPos };
+            let stepCount = 0;
+            
+            while ((currentPos.row !== endPos.row || currentPos.col !== endPos.col) && stepCount < expectedDistance) {
+                let nextPos = { ...currentPos };
+                
+                // Calculate next step (with wraparound)
+                if (currentPos.row !== endPos.row) {
+                    if (Math.abs(currentPos.row - endPos.row) <= 2) {
+                        // Direct movement
+                        nextPos.row = currentPos.row < endPos.row ? currentPos.row + 1 : currentPos.row - 1;
+                    } else {
+                        // Wraparound movement
+                        nextPos.row = currentPos.row < endPos.row ? (currentPos.row - 1 + 4) % 4 : (currentPos.row + 1) % 4;
+                    }
+                } else if (currentPos.col !== endPos.col) {
+                    if (Math.abs(currentPos.col - endPos.col) <= 2) {
+                        // Direct movement  
+                        nextPos.col = currentPos.col < endPos.col ? currentPos.col + 1 : currentPos.col - 1;
+                    } else {
+                        // Wraparound movement
+                        nextPos.col = currentPos.col < endPos.col ? (currentPos.col - 1 + 4) % 4 : (currentPos.col + 1) % 4;
+                    }
+                }
+                
+                // Ensure positions are within bounds
+                nextPos.row = (nextPos.row + 4) % 4;
+                nextPos.col = (nextPos.col + 4) % 4;
+                
+                path.push(nextPos);
+                currentPos = nextPos;
+                stepCount++;
+                
+                // Safety check
+                if (stepCount > 10) {
+                    console.warn('Path calculation exceeded safety limit');
+                    break;
+                }
+            }
+            
+            console.log('Calculated path:', path);
+            return path.length === expectedDistance + 1 ? path : null;
+        } catch (error) {
+            console.error('Error calculating move path:', error);
+            return null;
         }
     }
 
