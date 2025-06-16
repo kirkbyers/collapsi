@@ -553,5 +553,3 @@ export class TouchHandler {
         console.log('Touch handler destroyed');
     }
 }
-
-export default TouchHandler;
