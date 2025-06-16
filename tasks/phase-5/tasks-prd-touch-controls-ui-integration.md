@@ -39,14 +39,14 @@
   - [x] 2.6 Implement visual state updates for collapsed cards after moves
   - [x] 2.7 Add animation queuing system to prevent conflicting animations
 
-- [ ] 3.0 Build Step-by-Step Move Preview System
-  - [ ] 3.1 Create `js/ui/move-preview.js` for destination highlighting logic
-  - [ ] 3.2 Integrate with existing movement validation system to get valid destinations
-  - [ ] 3.3 Implement step-by-step preview showing immediate possible destinations
-  - [ ] 3.4 Add visual highlighting for valid destination cards (green tint/border)
-  - [ ] 3.5 Create move execution logic when tapping highlighted destinations
-  - [ ] 3.6 Integrate with Phase 4 move execution system for actual move processing
-  - [ ] 3.7 Add visual feedback for move completion and board state updates
+- [x] 3.0 Build Step-by-Step Move Preview System
+  - [x] 3.1 Create `js/ui/move-preview.js` for destination highlighting logic
+  - [x] 3.2 Integrate with existing movement validation system to get valid destinations
+  - [x] 3.3 Implement step-by-step preview showing immediate possible destinations
+  - [x] 3.4 Add visual highlighting for valid destination cards (green tint/border)
+  - [x] 3.5 Create move execution logic when tapping highlighted destinations
+  - [x] 3.6 Integrate with Phase 4 move execution system for actual move processing
+  - [x] 3.7 Add visual feedback for move completion and board state updates
 
 - [ ] 4.0 Implement Joker-Specific UI Controls
   - [ ] 4.1 Create `js/ui/joker-controls.js` for joker-specific interactions
