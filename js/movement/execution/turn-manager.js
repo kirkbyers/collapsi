@@ -521,4 +521,10 @@ function getTurnStatistics() {
     }
 }
 
+// Export functions to global scope for UI integration
+if (typeof window !== 'undefined') {
+    window.switchTurnAfterMoveCompletion = switchTurnAfterMoveCompletion;
+    window.getTurnStatistics = getTurnStatistics;
+}
+
 console.log('Turn management system loaded');

@@ -77,8 +77,13 @@ export class UI {
         };
 
         // Connect joker controls to touch handler
-        this.jokerControls.onEndTurn = () => {
+        this.jokerControls.onEndTurn = (result) => {
             this.touchHandler.clearSelection();
+            
+            // Handle turn switching after joker completion
+            if (result && result.success) {
+                this.handleJokerTurnCompletion(result);
+            }
         };
 
         // Connect touch handler to joker controls for move updates
@@ -109,6 +114,48 @@ export class UI {
 
         this.isInitialized = false;
         console.log('UI system destroyed');
+    }
+
+    /**
+     * Handle joker turn completion and switch turns
+     */
+    handleJokerTurnCompletion(completionResult) {
+        console.log('Handling joker turn completion:', completionResult);
+        
+        try {
+            // Create move data for turn switching
+            const jokerMoveData = {
+                playerId: gameState.players[gameState.currentPlayer].id,
+                startingPosition: completionResult.summary?.startingPosition,
+                destinationPosition: completionResult.summary?.currentPosition,
+                distance: completionResult.summary?.spacesMoved || 1,
+                type: 'joker'
+            };
+            
+            // Attempt turn switching
+            let turnSwitchResult = null;
+            if (typeof window !== 'undefined' && window.switchTurnAfterMoveCompletion) {
+                turnSwitchResult = window.switchTurnAfterMoveCompletion(jokerMoveData);
+            } else {
+                console.warn('switchTurnAfterMoveCompletion function not found, using fallback');
+                // Fallback: manually switch turns
+                gameState.currentPlayer = (gameState.currentPlayer + 1) % gameState.players.length;
+                turnSwitchResult = { success: true, reason: 'Manual turn switch successful' };
+            }
+            
+            console.log('Turn switch result after joker completion:', turnSwitchResult);
+            
+            // Re-render the board to update visual state
+            if (this.game && this.game.renderBoard) {
+                this.game.renderBoard();
+            }
+            
+            // Update game controls to reflect new current player
+            this.gameControls.updateFromGameState();
+            
+        } catch (error) {
+            console.error('Error handling joker turn completion:', error);
+        }
     }
 
     /**

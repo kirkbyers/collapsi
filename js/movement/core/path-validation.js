@@ -19,7 +19,9 @@ function isOrthogonalStep(fromPosition, toPosition) {
         const colDiff = Math.abs(toPosition.col - fromPosition.col);
         
         // Valid orthogonal move: exactly one coordinate changes by exactly 1
-        const isOrthogonal = (rowDiff === 1 && colDiff === 0) || (rowDiff === 0 && colDiff === 1);
+        // OR wraparound move (coordinate difference of 3 on a 4x4 board)
+        const isOrthogonal = (rowDiff === 1 && colDiff === 0) || (rowDiff === 0 && colDiff === 1) ||
+                            (rowDiff === 3 && colDiff === 0) || (rowDiff === 0 && colDiff === 3);
         
         return {
             valid: isOrthogonal,
