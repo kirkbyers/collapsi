@@ -103,19 +103,10 @@ function validateMoveCompletionForTurnSwitch(moveData) {
         console.log('Move data for validation:', moveData);
         
         if (!startingCard || !startingCard.collapsed) {
-            console.log('Starting card not collapsed, attempting to collapse it now...');
-            
-            // If this is a joker move, collapse only the starting card
-            if (moveData.type === 'joker' && startingCard) {
-                console.log('Collapsing joker starting card during validation');
-                startingCard.collapsed = true;
-                console.trace('Emergency joker collapse during validation');
-            } else {
-                return {
-                    valid: false,
-                    reason: 'Starting card was not collapsed after move'
-                };
-            }
+            return {
+                valid: false,
+                reason: 'Starting card was not collapsed after move'
+            };
         }
         
         return {

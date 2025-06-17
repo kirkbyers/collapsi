@@ -134,7 +134,7 @@ export class TouchHandler {
     /**
      * Handle card interaction (both touch and click)
      */
-    handleCardInteraction(element, event) {
+    handleCardInteraction(element) {
         console.log('Handling card interaction with element:', element);
         
         // Find the card element (might be child of card)
@@ -360,7 +360,7 @@ export class TouchHandler {
     isPawnAtPosition(row, col) {
         try {
             // Access global function through window or check if function exists
-            const getCurrentPlayerFn = window.getCurrentPlayer || getCurrentPlayer;
+            const getCurrentPlayerFn = window.getCurrentPlayer || window.getCurrentPlayerFn;
             const currentPlayer = getCurrentPlayerFn();
             if (!currentPlayer || !currentPlayer.isPlaced()) {
                 return false;
@@ -425,7 +425,7 @@ export class TouchHandler {
         try {
             console.log('Attempting move to:', destinationInfo);
             
-            const getCurrentPlayerFn = window.getCurrentPlayer || getCurrentPlayer;
+            const getCurrentPlayerFn = window.getCurrentPlayer || window.getCurrentPlayerFn;
             const currentPlayer = getCurrentPlayerFn();
             const startPosition = currentPlayer.getPosition();
             const endPosition = destinationInfo.position;
@@ -452,8 +452,8 @@ export class TouchHandler {
             console.log('Executing joker move from:', startPosition, 'to:', endPosition);
             
             // Get current player and card type
-            const getCurrentPlayerFn = window.getCurrentPlayer || getCurrentPlayer;
-            const getCardAtPositionFn = window.getCardAtPosition || getCardAtPosition;
+            const getCurrentPlayerFn = window.getCurrentPlayer || window.getCurrentPlayerFn;
+            const getCardAtPositionFn = window.getCardAtPosition || window.getCardAtPositionFn;
             const currentPlayer = getCurrentPlayerFn();
             const startingCard = getCardAtPositionFn(startPosition.row, startPosition.col);
             
@@ -462,11 +462,11 @@ export class TouchHandler {
             }
             
             // Check if joker movement is already active, if not start it
-            const getJokerMovementStateInfoFn = window.getJokerMovementStateInfo || getJokerMovementStateInfo;
+            const getJokerMovementStateInfoFn = window.getJokerMovementStateInfo || window.getJokerMovementStateInfoFn;
             const jokerStateInfo = getJokerMovementStateInfoFn();
             
             if (!jokerStateInfo.active) {
-                const startJokerMovementFn = window.startJokerMovement || startJokerMovement;
+                const startJokerMovementFn = window.startJokerMovement || window.startJokerMovementFn;
                 const startResult = startJokerMovementFn();
                 if (!startResult.success) {
                     return { success: false, error: startResult.reason };
@@ -474,7 +474,7 @@ export class TouchHandler {
             }
             
             // Update joker movement state BEFORE executing the move
-            const updateJokerMovementStateFn = window.updateJokerMovementState || updateJokerMovementState;
+            const updateJokerMovementStateFn = window.updateJokerMovementState || window.updateJokerMovementStateFn;
             const jokerUpdateResult = updateJokerMovementStateFn(endPosition);
             
             console.log('Joker update result:', jokerUpdateResult);
@@ -490,6 +490,23 @@ export class TouchHandler {
             
             console.log(`Joker move: spacesMoved=${spacesMoved}, turnCompleted=${turnCompleted}, mustEndTurn=${jokerUpdateResult.mustEndTurn}`);
             
+            // For auto-completion (4 moves), let joker controls handle it
+            if (jokerUpdateResult.mustEndTurn && spacesMoved >= 4) {
+                console.log('Joker reached 4 moves, letting joker controls handle auto-completion');
+                return {
+                    success: true,
+                    type: 'joker',
+                    destination: endPosition,
+                    spacesMoved: spacesMoved,
+                    remainingDistance: jokerUpdateResult.remainingDistance || 0,
+                    state: jokerUpdateResult.state || 'must_complete',
+                    canEndTurn: true,
+                    mustEndTurn: true,
+                    turnCompleted: false, // Let joker controls complete it
+                    autoCompletion: true
+                };
+            }
+            
             if (turnCompleted) {
                 // For a completed joker turn, create proper move data
                 const jokerMoveData = {
@@ -504,26 +521,7 @@ export class TouchHandler {
                 
                 console.log('Completing joker turn with move data:', jokerMoveData);
                 
-                // Collapse starting card
-                let collapseResult = { success: false, reason: 'Function not found' };
-                try {
-                    if (typeof window !== 'undefined' && window.collapseStartingCardAfterMove) {
-                        collapseResult = window.collapseStartingCardAfterMove(startPosition, jokerMoveData);
-                    } else if (typeof collapseStartingCardAfterMove !== 'undefined') {
-                        collapseResult = collapseStartingCardAfterMove(startPosition, jokerMoveData);
-                    } else {
-                        console.warn('collapseStartingCardAfterMove function not found, using fallback');
-                        // Fallback: manually collapse the card
-                        const startingCard = getCardAtPositionFn(startPosition.row, startPosition.col);
-                        if (startingCard) {
-                            console.log(`Fallback: Collapsing card at (${startPosition.row}, ${startPosition.col}): ${startingCard.type}`);
-                            startingCard.collapsed = true;
-                            collapseResult = { success: true, reason: 'Manual collapse successful' };
-                        }
-                    }
-                } catch (error) {
-                    console.warn('Card collapse failed:', error);
-                }
+                // Card collapse is now handled by the joker completion module
                 
                 // Switch turns
                 let turnSwitchResult = { success: false, reason: 'Function not found' };
@@ -564,7 +562,6 @@ export class TouchHandler {
                     mustEndTurn: true,
                     turnCompleted: true,
                     moveData: jokerMoveData,
-                    collapsed: collapseResult.success,
                     turnSwitched: turnSwitchResult.success
                 };
             } else {

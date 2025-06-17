@@ -207,6 +207,12 @@ function completeJokerMovement() {
         
         gameState.moveHistory.push(moveRecord);
         
+        // Collapse the starting joker card
+        const collapseResult = collapseJokerStartingCard(jokerState.startingPosition, moveRecord);
+        if (!collapseResult.success) {
+            console.warn('Failed to collapse starting joker card:', collapseResult.reason);
+        }
+        
         // Clear joker movement state
         gameState.jokerMoveState = null;
         
@@ -222,6 +228,94 @@ function completeJokerMovement() {
             success: false,
             reason: `Completion error: ${error.message}`
         };
+    }
+}
+
+// Collapse the starting joker card after movement completion
+function collapseJokerStartingCard(startingPosition, moveRecord) {
+    console.log('Collapsing joker starting card at:', startingPosition);
+    
+    try {
+        // Get the starting joker card
+        const startingCard = getCardAtPosition(startingPosition.row, startingPosition.col);
+        if (!startingCard) {
+            return {
+                success: false,
+                reason: `Starting joker card not found at position (${startingPosition.row}, ${startingPosition.col})`
+            };
+        }
+        
+        // Verify it's a joker card
+        if (startingCard.type !== 'red-joker' && startingCard.type !== 'black-joker') {
+            return {
+                success: false,
+                reason: `Card at starting position is not a joker: ${startingCard.type}`
+            };
+        }
+        
+        // Check if already collapsed
+        if (startingCard.collapsed) {
+            console.log('Joker starting card already collapsed');
+            return {
+                success: true,
+                reason: 'Card was already collapsed'
+            };
+        }
+        
+        // Mark card as collapsed
+        startingCard.collapsed = true;
+        
+        // Set collapse metadata
+        startingCard.collapseData = {
+            timestamp: new Date().toISOString(),
+            triggeredByMove: moveRecord.timestamp,
+            playerId: moveRecord.playerId,
+            previousType: startingCard.type
+        };
+        
+        // Update game state to track collapsed cards
+        if (!gameState.collapsedCards) {
+            gameState.collapsedCards = [];
+        }
+        
+        gameState.collapsedCards.push({
+            position: { ...startingPosition },
+            cardType: startingCard.type,
+            collapseTimestamp: startingCard.collapseData.timestamp,
+            triggeredByPlayerId: moveRecord.playerId,
+            moveId: moveRecord.timestamp
+        });
+        
+        console.log(`Joker card ${startingCard.type} at (${startingPosition.row}, ${startingPosition.col}) collapsed successfully`);
+        
+        // Update visual representation
+        updateCardVisualAfterCollapse(startingPosition);
+        
+        return {
+            success: true,
+            reason: 'Joker starting card collapsed successfully'
+        };
+        
+    } catch (error) {
+        console.error('Error collapsing joker starting card:', error.message);
+        return {
+            success: false,
+            reason: `Collapse error: ${error.message}`
+        };
+    }
+}
+
+// Update card visual after collapse
+function updateCardVisualAfterCollapse(position) {
+    try {
+        const cardElement = document.querySelector(`[data-row="${position.row}"][data-col="${position.col}"]`);
+        if (cardElement) {
+            cardElement.classList.add('collapsed');
+            cardElement.classList.add('face-down');
+            console.log(`Updated visual for collapsed card at (${position.row}, ${position.col})`);
+        }
+    } catch (error) {
+        console.warn('Failed to update card visual after collapse:', error.message);
     }
 }
 
