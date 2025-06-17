@@ -129,6 +129,7 @@ export class UI {
                 startingPosition: completionResult.summary?.startingPosition,
                 destinationPosition: completionResult.summary?.currentPosition,
                 distance: completionResult.summary?.spacesMoved || 1,
+                path: completionResult.summary?.movePath || [completionResult.summary?.startingPosition, completionResult.summary?.currentPosition],
                 type: 'joker'
             };
             

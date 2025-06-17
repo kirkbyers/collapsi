@@ -484,10 +484,9 @@ export class TouchHandler {
             }
             
             // Check if this move completes the joker turn
-            // For now, automatically end turn after any joker move (simplified logic)
-            // TODO: Add UI controls for player to choose to continue or end turn
+            // Turn is only completed when forced (mustEndTurn) or explicitly ended by player
             const spacesMoved = jokerUpdateResult.spacesMoved || 0;
-            const turnCompleted = jokerUpdateResult.mustEndTurn || spacesMoved >= 1;
+            const turnCompleted = jokerUpdateResult.mustEndTurn;
             
             console.log(`Joker move: spacesMoved=${spacesMoved}, turnCompleted=${turnCompleted}, mustEndTurn=${jokerUpdateResult.mustEndTurn}`);
             
@@ -517,6 +516,7 @@ export class TouchHandler {
                         // Fallback: manually collapse the card
                         const startingCard = getCardAtPositionFn(startPosition.row, startPosition.col);
                         if (startingCard) {
+                            console.log(`Fallback: Collapsing card at (${startPosition.row}, ${startPosition.col}): ${startingCard.type}`);
                             startingCard.collapsed = true;
                             collapseResult = { success: true, reason: 'Manual collapse successful' };
                         }
@@ -649,6 +649,7 @@ export class TouchHandler {
                         // Fallback: manually collapse the card
                         const startingCard = getCardAtPositionFn(startPosition.row, startPosition.col);
                         if (startingCard) {
+                            console.log(`Regular move fallback: Collapsing card at (${startPosition.row}, ${startPosition.col}): ${startingCard.type}`);
                             startingCard.collapsed = true;
                             collapseResult = { success: true, reason: 'Manual collapse successful' };
                         }
