@@ -448,53 +448,17 @@ function getValidNumberedCardDestinations(startPosition, distance) {
     
     try {
         const validDestinations = [];
-        const directions = ['up', 'down', 'left', 'right'];
+        const allPaths = generateAllPossiblePaths(startPosition, distance);
         
-        // For each direction, calculate if we can move the required distance
-        directions.forEach(direction => {
-            let currentPos = { ...startPosition };
-            let validPath = true;
-            const path = [currentPos];
-            
-            // Try to move the exact distance in this direction
-            for (let step = 0; step < distance && validPath; step++) {
-                const nextPosResult = calculateWraparoundPosition(currentPos, direction);
-                
-                if (!nextPosResult) {
-                    validPath = false;
-                    break;
-                }
-                
-                const nextPos = nextPosResult.position;
-                
-                // Check if next position is valid (not collapsed, not occupied, not revisited)
-                const occupiedCheck = isPositionOccupied(nextPos, gameState.board, gameState.players);
-                const collapsedCheck = isCardCollapsed(nextPos, gameState.board);
-                const alreadyVisited = path.some(p => p.row === nextPos.row && p.col === nextPos.col);
-                
-                if (occupiedCheck.occupied || collapsedCheck.collapsed || alreadyVisited) {
-                    validPath = false;
-                    break;
-                }
-                
-                currentPos = nextPos;
-                path.push({ ...currentPos });
-            }
-            
-            // If we successfully moved the exact distance, this is a valid destination
-            if (validPath && path.length === distance + 1) {
+        allPaths.forEach(path => {
+            if (isValidMovementPath(path, startPosition)) {
                 const finalPosition = path[path.length - 1];
-                
-                // Ensure it's not the starting position
-                if (finalPosition.row !== startPosition.row || finalPosition.col !== startPosition.col) {
-                    validDestinations.push({
-                        position: finalPosition,
-                        distance: distance,
-                        direction: direction,
-                        path: path,
-                        isImmediate: distance === 1
-                    });
-                }
+                validDestinations.push({
+                    position: finalPosition,
+                    distance: distance,
+                    path: path,
+                    isImmediate: distance === 1
+                });
             }
         });
         
@@ -504,6 +468,85 @@ function getValidNumberedCardDestinations(startPosition, distance) {
         console.error('Error getting numbered card destinations:', error.message);
         return [];
     }
+}
+
+// Generate all possible paths of given length using recursive pathfinding
+function generateAllPossiblePaths(startPosition, remainingSteps) {
+    if (remainingSteps === 0) {
+        return [[startPosition]];
+    }
+    
+    const allPaths = [];
+    const directions = ['up', 'down', 'left', 'right'];
+    
+    directions.forEach(direction => {
+        const nextPosResult = calculateWraparoundPosition(startPosition, direction);
+        if (nextPosResult) {
+            const nextPos = nextPosResult.position;
+            
+            // Recursively generate paths from this position
+            const subPaths = generateAllPossiblePaths(nextPos, remainingSteps - 1);
+            
+            subPaths.forEach(subPath => {
+                const fullPath = [startPosition, ...subPath];
+                allPaths.push(fullPath);
+            });
+        }
+    });
+    
+    return allPaths;
+}
+
+// Validate a complete movement path
+function isValidMovementPath(path, startPosition) {
+    if (path.length < 2) return false;
+    
+    const visited = new Set();
+    
+    for (let i = 0; i < path.length; i++) {
+        const pos = path[i];
+        const posKey = `${pos.row},${pos.col}`;
+        
+        // Check if we've visited this position before (no backtracking)
+        if (visited.has(posKey)) {
+            return false;
+        }
+        visited.add(posKey);
+        
+        // Skip starting position checks
+        if (i === 0) continue;
+        
+        // Check if position is valid (not collapsed, not occupied)
+        const occupiedCheck = isPositionOccupied(pos, gameState.board, gameState.players);
+        const collapsedCheck = isCardCollapsed(pos, gameState.board);
+        
+        if (occupiedCheck.occupied || collapsedCheck.collapsed) {
+            return false;
+        }
+        
+        // Validate orthogonal movement
+        const prevPos = path[i - 1];
+        if (!isOrthogonalMove(prevPos, pos)) {
+            return false;
+        }
+    }
+    
+    // Final position cannot be the starting position
+    const finalPos = path[path.length - 1];
+    return !(finalPos.row === startPosition.row && finalPos.col === startPosition.col);
+}
+
+// Check if a move is orthogonal (up/down/left/right only)
+function isOrthogonalMove(fromPos, toPos) {
+    const rowDiff = Math.abs(toPos.row - fromPos.row);
+    const colDiff = Math.abs(toPos.col - fromPos.col);
+    
+    // Handle wraparound cases
+    const maxRowDiff = Math.min(rowDiff, 4 - rowDiff);
+    const maxColDiff = Math.min(colDiff, 4 - colDiff);
+    
+    // Must move exactly one space in one direction
+    return (maxRowDiff === 1 && maxColDiff === 0) || (maxRowDiff === 0 && maxColDiff === 1);
 }
 
 // Get valid destinations for joker movement
