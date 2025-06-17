@@ -405,12 +405,24 @@ export class TouchHandler {
                 return null;
             }
             
+            // Get the path from the stored destination data
+            let path = null;
+            try {
+                const pathData = cardElement.getAttribute('data-destination-path');
+                if (pathData) {
+                    path = JSON.parse(pathData);
+                }
+            } catch (pathError) {
+                console.warn('Could not parse path data from destination:', pathError);
+            }
+            
             return {
                 position: { row, col },
                 distance: cardElement.getAttribute('data-destination-distance'),
                 direction: cardElement.getAttribute('data-destination-direction'),
                 isJoker: cardElement.getAttribute('data-is-joker-destination') === 'true',
-                isImmediate: cardElement.classList.contains('immediate-destination')
+                isImmediate: cardElement.classList.contains('immediate-destination'),
+                path: path
             };
         } catch (error) {
             console.error('Error getting destination info:', error);
@@ -435,8 +447,8 @@ export class TouchHandler {
                 // Handle joker move
                 return this.executeJokerMove(startPosition, endPosition);
             } else {
-                // Handle numbered card move
-                return this.executeNumberedCardMove(startPosition, endPosition, parseInt(destinationInfo.distance));
+                // Handle numbered card move with stored path
+                return this.executeNumberedCardMove(startPosition, endPosition, parseInt(destinationInfo.distance), destinationInfo.path);
             }
         } catch (error) {
             console.error('Error attempting move:', error);
@@ -602,15 +614,20 @@ export class TouchHandler {
     /**
      * Execute a numbered card move
      */
-    executeNumberedCardMove(startPosition, endPosition, distance) {
+    executeNumberedCardMove(startPosition, endPosition, distance, path = null) {
         try {
             console.log(`Executing numbered card move: ${distance} spaces from ${JSON.stringify(startPosition)} to ${JSON.stringify(endPosition)}`);
             
-            // Calculate path for the move
-            const path = this.calculateMovePath(startPosition, endPosition, distance);
-            if (!path) {
-                return { success: false, error: 'Could not calculate valid path' };
+            // Use provided path or calculate if not provided
+            let movePath = path;
+            if (!movePath) {
+                movePath = this.calculateMovePath(startPosition, endPosition, distance);
+                if (!movePath) {
+                    return { success: false, error: 'Could not calculate valid path' };
+                }
             }
+            
+            console.log('Using path for move:', movePath);
             
             // Get current player and card type
             const getCurrentPlayerFn = window.getCurrentPlayer || getCurrentPlayer;
@@ -627,7 +644,7 @@ export class TouchHandler {
             const moveResult = executeMoveToDestinationFn(
                 startPosition,
                 endPosition,
-                path,
+                movePath,
                 startingCard.type,
                 gameState.board,
                 gameState.players,

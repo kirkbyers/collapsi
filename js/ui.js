@@ -388,6 +388,12 @@ function clearDestinationHighlighting() {
                 'distance-1', 'distance-2', 'distance-3', 'distance-4',
                 'pulse'
             );
+            
+            // Clear destination data attributes
+            card.removeAttribute('data-destination-distance');
+            card.removeAttribute('data-destination-direction');
+            card.removeAttribute('data-is-joker-destination');
+            card.removeAttribute('data-destination-path');
         });
         
         console.log('Destination highlighting cleared');
@@ -581,6 +587,11 @@ function highlightValidDestinations() {
                 cardElement.setAttribute('data-destination-distance', destination.distance || 'joker');
                 cardElement.setAttribute('data-destination-direction', destination.direction || '');
                 cardElement.setAttribute('data-is-joker-destination', destination.isJoker ? 'true' : 'false');
+                
+                // Store the path data for numbered card moves
+                if (!destination.isJoker && destination.path) {
+                    cardElement.setAttribute('data-destination-path', JSON.stringify(destination.path));
+                }
             }
         });
         
