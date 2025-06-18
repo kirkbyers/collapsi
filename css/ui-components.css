@@ -343,6 +343,12 @@
     min-width: 44px;
     min-height: 44px;
     transition: all 0.15s ease-out;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    touch-action: manipulation;
 }
 
 .end-turn-button:hover {
@@ -353,6 +359,7 @@
 
 .end-turn-button:active {
     transform: translateY(0);
+    background: #0f6674;
 }
 
 /* Game Notification Styles */

@@ -11,6 +11,9 @@ export class JokerControls {
         this.progressIndicator = null;
         this.container = null;
         
+        // Touch handling state
+        this.touchStarted = false;
+        
         // Callback for when end turn is pressed
         this.onEndTurn = null;
         
@@ -76,9 +79,24 @@ export class JokerControls {
         if (this.endTurnButton) {
             this.endTurnButton.addEventListener('click', this.handleEndTurnClick.bind(this));
             
-            // Prevent default touch behaviors
+            // Handle touch events properly for mobile
             this.endTurnButton.addEventListener('touchstart', (e) => {
                 e.preventDefault();
+                // Store touch start to validate touch end
+                this.touchStarted = true;
+            });
+            
+            this.endTurnButton.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                if (this.touchStarted) {
+                    this.touchStarted = false;
+                    // Trigger the same handler as click
+                    this.handleEndTurnClick(e);
+                }
+            });
+            
+            this.endTurnButton.addEventListener('touchcancel', () => {
+                this.touchStarted = false;
             });
         }
     }
