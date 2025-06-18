@@ -12,12 +12,14 @@ export class GameControls {
         this.hamburgerButton = null;
         this.menuDropdown = null;
         this.turnIndicator = null;
+        this.rulesDialog = null;
         
         // Event handlers for cleanup
         this.boundHandlers = {
             hamburgerClick: this.toggleMenu.bind(this),
             documentClick: this.handleDocumentClick.bind(this),
-            menuItemClick: this.handleMenuItemClick.bind(this)
+            menuItemClick: this.handleMenuItemClick.bind(this),
+            closeRulesDialog: this.closeRulesDialog.bind(this)
         };
         
         this.initialize();
@@ -67,6 +69,7 @@ export class GameControls {
         
         // Create menu items
         this.createMenuItem('New Game', 'new-game', 'Start a new game');
+        this.createMenuItem('How to Play', 'how-to-play', 'View game rules and instructions');
         
         // Append to document body
         document.body.appendChild(this.menuDropdown);
@@ -229,6 +232,9 @@ export class GameControls {
                 case 'new-game':
                     this.startNewGame();
                     break;
+                case 'how-to-play':
+                    this.showRulesDialog();
+                    break;
                 default:
                     console.warn('Unknown menu action:', action);
             }
@@ -378,6 +384,159 @@ export class GameControls {
     }
 
     /**
+     * Show the rules dialog
+     */
+    showRulesDialog() {
+        console.log('Showing rules dialog');
+        
+        // Create dialog if it doesn't exist
+        if (!this.rulesDialog) {
+            this.createRulesDialog();
+        }
+        
+        // Show the dialog
+        this.rulesDialog.classList.add('visible');
+        document.body.style.overflow = 'hidden'; // Prevent background scrolling
+        
+        // Focus the close button for accessibility
+        const closeButton = this.rulesDialog.querySelector('.rules-close-button');
+        if (closeButton) {
+            closeButton.focus();
+        }
+    }
+
+    /**
+     * Close the rules dialog
+     */
+    closeRulesDialog() {
+        console.log('Closing rules dialog');
+        
+        if (this.rulesDialog) {
+            this.rulesDialog.classList.remove('visible');
+            document.body.style.overflow = ''; // Restore scrolling
+        }
+    }
+
+    /**
+     * Create the rules dialog
+     */
+    createRulesDialog() {
+        // Create dialog container
+        this.rulesDialog = document.createElement('div');
+        this.rulesDialog.className = 'rules-dialog';
+        this.rulesDialog.setAttribute('role', 'dialog');
+        this.rulesDialog.setAttribute('aria-labelledby', 'rules-title');
+        this.rulesDialog.setAttribute('aria-modal', 'true');
+        
+        // Create dialog content
+        const dialogContent = document.createElement('div');
+        dialogContent.className = 'rules-content';
+        
+        // Create header
+        const header = document.createElement('div');
+        header.className = 'rules-header';
+        
+        const title = document.createElement('h2');
+        title.id = 'rules-title';
+        title.className = 'rules-title';
+        title.textContent = 'How to Play Collapsi';
+        
+        const closeButton = document.createElement('button');
+        closeButton.className = 'rules-close-button';
+        closeButton.innerHTML = '&times;';
+        closeButton.setAttribute('aria-label', 'Close rules dialog');
+        closeButton.addEventListener('click', this.boundHandlers.closeRulesDialog);
+        
+        header.appendChild(title);
+        header.appendChild(closeButton);
+        
+        // Create body with game rules
+        const body = document.createElement('div');
+        body.className = 'rules-body';
+        body.innerHTML = this.getRulesHTML();
+        
+        // Assemble dialog
+        dialogContent.appendChild(header);
+        dialogContent.appendChild(body);
+        this.rulesDialog.appendChild(dialogContent);
+        
+        // Close dialog when clicking outside
+        this.rulesDialog.addEventListener('click', (event) => {
+            if (event.target === this.rulesDialog) {
+                this.closeRulesDialog();
+            }
+        });
+        
+        // Close dialog with Escape key
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape' && this.rulesDialog.classList.contains('visible')) {
+                this.closeRulesDialog();
+            }
+        });
+        
+        // Append to document body
+        document.body.appendChild(this.rulesDialog);
+    }
+
+    /**
+     * Get the formatted HTML for game rules
+     * @returns {string} HTML content for rules
+     */
+    getRulesHTML() {
+        return `
+            <div class="rules-section">
+                <h3>Game Objective</h3>
+                <p>Win the game by being the last player able to make a legal move.</p>
+            </div>
+            
+            <div class="rules-section">
+                <h3>Players</h3>
+                <p>2 players</p>
+            </div>
+            
+            <div class="rules-section">
+                <h3>Setup</h3>
+                <p>The deck is shuffled and dealt face-up to form a 4x4 grid. Each player places their pawn on their starting joker card - Red begins on the red joker, Blue begins on the black joker.</p>
+            </div>
+            
+            <div class="rules-section">
+                <h3>How to Play</h3>
+                <p>Red goes first. The number of spaces you must move is determined by your starting card (the card you begin your turn on).</p>
+                
+                <p><strong>Joker Cards:</strong> The joker is wild and allows you to move 1, 2, 3, or 4 spaces. It's the only card that lets you choose how far to move.</p>
+                
+                <p><strong>Numbered Cards:</strong> You must move exactly the number of spaces shown on your starting card.</p>
+                
+                <p><strong>Card Collapse:</strong> After you complete your move, your starting card collapses (flips face down) and can no longer be passed through or landed on.</p>
+            </div>
+            
+            <div class="rules-section">
+                <h3>Movement Rules</h3>
+                <ul>
+                    <li><strong>Direction:</strong> Move orthogonally (up, down, left, right) only</li>
+                    <li><strong>Wraparound:</strong> The board wraps around like Pac-Man - you can exit one edge and enter the opposite edge</li>
+                    <li><strong>Path Planning:</strong> You may change directions to complete your move (e.g., move up 1, then left 3 for a total of 4 spaces)</li>
+                </ul>
+            </div>
+            
+            <div class="rules-section">
+                <h3>Restrictions</h3>
+                <ul>
+                    <li>You may not move through the same card more than once per turn</li>
+                    <li>You may not end your move on your starting card</li>
+                    <li>You may not end your move on a card occupied by your opponent</li>
+                    <li>You may not move through or land on collapsed (face-down) cards</li>
+                </ul>
+            </div>
+            
+            <div class="rules-section">
+                <h3>Winning</h3>
+                <p>The game continues until a player cannot complete a legal move based on their starting card's number. The last player able to complete a move wins!</p>
+            </div>
+        `;
+    }
+
+    /**
      * Cleanup and destroy game controls
      */
     destroy() {
@@ -405,10 +564,15 @@ export class GameControls {
             this.turnIndicator.parentNode.removeChild(this.turnIndicator);
         }
         
+        if (this.rulesDialog && this.rulesDialog.parentNode) {
+            this.rulesDialog.parentNode.removeChild(this.rulesDialog);
+        }
+        
         // Clear references
         this.hamburgerButton = null;
         this.menuDropdown = null;
         this.turnIndicator = null;
+        this.rulesDialog = null;
         
         console.log('Game controls destroyed');
     }
