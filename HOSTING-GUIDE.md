@@ -78,13 +78,15 @@ Target: collapsi-xxx.pages.dev
 3. SSL certificate is automatically provisioned (free)
 
 ### Security Headers
-Add these headers in Pages project settings → Functions → _headers file:
+Create a `_headers` file in your project root with these security headers:
 ```
 /*
   X-Frame-Options: DENY
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
   X-XSS-Protection: 1; mode=block
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'
+  Permissions-Policy: geolocation=(), microphone=(), camera=()
 ```
 
 ## Step 5: Performance Optimization (Free)
