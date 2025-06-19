@@ -164,25 +164,29 @@ Collapsi is a 2-player strategy game where players move pawns on a collapsing 4x
 - Professional mobile-optimized styling (44px+ touch targets)
 - Keyboard accessibility (ESC, Tab navigation) and ARIA labels
 
-### Phase 6: Game Rules & Win Conditions
-**Goal**: Complete the game logic
+### Phase 6: Game Rules & Win Conditions ⚠️
+**Goal**: Complete the game logic - **PARTIALLY COMPLETED**
 
-**Step 6.1: Legal move detection in js/game.js**
-- Function to get all possible moves for current player
-- Check each direction (up, down, left, right) for valid moves
-- Account for wraparound when checking moves
-- Return empty array if no legal moves exist
+**❌ Step 6.1: Legal move detection in js/game.js**
+- getAllPossibleMoves() function exists but returns empty array (placeholder)
+- Comprehensive movement validation system exists in js/movement/ modules
+- Need to integrate validation system with legal move detection
+- All supporting functions available: position validation, path generation, distance checking
 
-**Step 6.2: Win condition**
-- Check for win after each turn
-- Display winner when game ends
-- Add game over screen with restart option
-- Prevent further moves after game ends
+**✅ Step 6.2: Win condition logic**
+- Complete win condition framework in checkGameEnd() function
+- Turn manager handles game end detection in checkNewPlayerValidMoves()
+- Winner determination logic (last player able to move wins)
+- Game status tracking (gameState.gameStatus, gameState.winner)
+- UI updates for game end (turn indicator shows "Game Over")
+- Depends on Step 6.1 for full functionality
 
-**Step 6.3: Game state persistence**
-- Save game state to localStorage after each move
-- Restore game on page reload
-- Add "Resume Game" vs "New Game" options
+**✅ Step 6.3: Game state persistence**
+- Complete localStorage implementation in js/utils.js
+- saveGameState() and loadGameState() functions with JSON serialization
+- clearSavedGameState() and compatibility testing functions
+- Save timestamp tracking and error handling
+- Auto-save integration ready
 
 ### Phase 7: Polish & Mobile Optimization
 **Goal**: Make it feel professional
@@ -299,13 +303,15 @@ collapsi/
 - ✅ Orthogonal movement with wraparound
 - ✅ Card collapse mechanics
 - ✅ Legal move validation (modular architecture)
-- ✅ Win condition detection
+- ⚠️ Win condition detection (framework complete, needs legal move integration)
 - ✅ Joker wild card support (complete state machine)
 - ✅ Performance-optimized validation (<100ms)
 - ✅ Path visualization and movement preview
 - ✅ Complete move execution system
 - ✅ Card collapse mechanics and visual updates
 - ✅ Turn switching and game flow control
+- ✅ Game state persistence (localStorage)
+- ❌ Legal move detection (placeholder function needs implementation)
 
 ### UI/UX Features
 - ✅ Mobile-first responsive design
