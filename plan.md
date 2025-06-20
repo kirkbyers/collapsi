@@ -167,13 +167,13 @@ Collapsi is a 2-player strategy game where players move pawns on a collapsing 4x
 ### Phase 6: Game Rules & Win Conditions ⚠️
 **Goal**: Complete the game logic - **PARTIALLY COMPLETED**
 
-**❌ Step 6.1: Legal move detection in js/game.js**
+** Step 6.1: Legal move detection in js/game.js**
 - getAllPossibleMoves() function exists but returns empty array (placeholder)
 - Comprehensive movement validation system exists in js/movement/ modules
 - Need to integrate validation system with legal move detection
 - All supporting functions available: position validation, path generation, distance checking
 
-**✅ Step 6.2: Win condition logic**
+** Step 6.2: Win condition logic**
 - Complete win condition framework in checkGameEnd() function
 - Turn manager handles game end detection in checkNewPlayerValidMoves()
 - Winner determination logic (last player able to move wins)
@@ -181,7 +181,7 @@ Collapsi is a 2-player strategy game where players move pawns on a collapsing 4x
 - UI updates for game end (turn indicator shows "Game Over")
 - Depends on Step 6.1 for full functionality
 
-**✅ Step 6.3: Game state persistence**
+** Step 6.3: Game state persistence**
 - Complete localStorage implementation in js/utils.js
 - saveGameState() and loadGameState() functions with JSON serialization
 - clearSavedGameState() and compatibility testing functions
@@ -198,7 +198,6 @@ Collapsi is a 2-player strategy game where players move pawns on a collapsing 4x
 - Loading states and micro-interactions
 
 **Step 7.2: Mobile optimization**
-- Test on various iPhone sizes (11, 12, 13, 14, 15)
 - Optimize touch targets and spacing
 - Handle orientation changes
 - Add haptic feedback (if supported)
