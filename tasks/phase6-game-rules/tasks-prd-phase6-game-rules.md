@@ -29,13 +29,13 @@
   - [x] 1.7 Return array of move objects with source and destination positions
   - [x] 1.8 Add performance logging to ensure <100ms target is met
 
-- [ ] 2.0 Complete Win Condition Logic Integration
-  - [ ] 2.1 Update `checkGameEnd()` function in `js/game.js` to use legal move detection
-  - [ ] 2.2 Integrate with `checkNewPlayerValidMoves()` in turn manager for automatic detection
-  - [ ] 2.3 Set `gameState.gameStatus` to "ended" when no legal moves are available
-  - [ ] 2.4 Set `gameState.winner` to the last player able to make a legal move
-  - [ ] 2.5 Trigger winner modal display when game ends
-  - [ ] 2.6 Update turn indicator to show "Game Over" state
+- [x] 2.0 Complete Win Condition Logic Integration
+  - [x] 2.1 Update `checkGameEnd()` function in `js/game.js` to use legal move detection
+  - [x] 2.2 Integrate with `checkNewPlayerValidMoves()` in turn manager for automatic detection
+  - [x] 2.3 Set `gameState.gameStatus` to "ended" when no legal moves are available
+  - [x] 2.4 Set `gameState.winner` to the last player able to make a legal move
+  - [x] 2.5 Trigger winner modal display when game ends
+  - [x] 2.6 Update turn indicator to show "Game Over" state
 
 - [ ] 3.0 Create Winner Modal UI Component
   - [ ] 3.1 Create modal HTML structure (JavaScript-generated or static in index.html)

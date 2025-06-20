@@ -395,20 +395,28 @@ function checkNewPlayerValidMoves(newCurrentPlayer) {
             };
         }
         
-        // For now, return true - full implementation would check all possible moves
-        // This would integrate with the movement validation system
+        // Use the legal move detection system to get all possible moves
+        const legalMoves = getAllPossibleMoves(newCurrentPlayer);
+        const hasValidMoves = legalMoves.length > 0;
+        
+        console.log(`Player ${newCurrentPlayer.id} has ${legalMoves.length} legal moves available`);
+        
         return {
-            hasValidMoves: true,
-            reason: 'Player has potential valid moves',
+            hasValidMoves: hasValidMoves,
+            validMoveCount: legalMoves.length,
+            reason: hasValidMoves ? 
+                `Player has ${legalMoves.length} valid moves available` : 
+                'Player has no legal moves available',
             startingCardType: startingCard.type,
-            playerPosition: playerPosition
+            playerPosition: playerPosition,
+            legalMoves: legalMoves
         };
         
     } catch (error) {
         console.error('Error checking valid moves:', error.message);
         return {
-            hasValidMoves: true, // Default to true to prevent premature game end
-            reason: 'Unable to check valid moves'
+            hasValidMoves: false, // Default to false when error occurs to end game gracefully
+            reason: `Unable to check valid moves: ${error.message}`
         };
     }
 }

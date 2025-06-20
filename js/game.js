@@ -90,18 +90,92 @@ function switchToNextPlayer() {
 // Check if game has ended (no legal moves available)
 function checkGameEnd() {
     const currentPlayer = getCurrentPlayer();
+    
+    if (!currentPlayer) {
+        console.warn('No current player available for game end check');
+        return false;
+    }
+    
     const legalMoves = getAllPossibleMoves(currentPlayer);
     
     if (legalMoves.length === 0) {
+        // Set game status to ended
         gameState.gameStatus = 'ended';
+        
         // Winner is the OTHER player (who made the last valid move)
         const previousPlayerIndex = (gameState.currentPlayer - 1 + gameState.players.length) % gameState.players.length;
-        gameState.winner = gameState.players[previousPlayerIndex].id;
-        console.log(`Game ended! Winner: ${gameState.winner}`);
+        const winnerPlayer = gameState.players[previousPlayerIndex];
+        gameState.winner = winnerPlayer.id;
+        
+        // Add game end metadata
+        gameState.gameEndTimestamp = new Date().toISOString();
+        gameState.gameEndReason = `Player ${currentPlayer.id} has no legal moves available`;
+        
+        console.log(`Game ended! Winner: ${gameState.winner} (${winnerPlayer.color})`);
+        console.log(`Reason: ${gameState.gameEndReason}`);
+        
+        // Update turn indicator to show "Game Over" state
+        updateTurnIndicatorForGameEnd(winnerPlayer);
+        
+        // Trigger winner modal display (if function exists)
+        if (typeof showWinnerModal === 'function') {
+            showWinnerModal(winnerPlayer);
+        } else {
+            console.log('Winner modal function not yet implemented');
+        }
+        
+        // Disable further board interactions
+        disableBoardInteraction();
+        
         return true;
     }
     
     return false;
+}
+
+// Update turn indicator to show "Game Over" state
+function updateTurnIndicatorForGameEnd(winnerPlayer) {
+    console.log(`Updating turn indicator for game end, winner: ${winnerPlayer.id}`);
+    
+    try {
+        const turnIndicators = document.querySelectorAll('.turn-indicator, .current-player-indicator');
+        
+        turnIndicators.forEach(indicator => {
+            indicator.textContent = `Game Over - ${winnerPlayer.color.charAt(0).toUpperCase() + winnerPlayer.color.slice(1)} Wins!`;
+            indicator.className = `turn-indicator game-over winner-${winnerPlayer.color}`;
+        });
+        
+        console.log('Turn indicator updated for game end');
+    } catch (error) {
+        console.error('Error updating turn indicator for game end:', error.message);
+    }
+}
+
+// Disable board interaction when game ends
+function disableBoardInteraction() {
+    console.log('Disabling board interaction for game end');
+    
+    try {
+        const gameBoard = document.getElementById('game-board');
+        if (gameBoard) {
+            gameBoard.classList.add('game-ended');
+            // Disable all card click events
+            gameBoard.style.pointerEvents = 'none';
+        }
+        
+        // Clear any active highlights
+        if (typeof clearPawnHighlights === 'function') {
+            clearPawnHighlights();
+        }
+        
+        if (typeof clearPathHighlighting === 'function') {
+            clearPathHighlighting();
+        }
+        
+        console.log('Board interaction disabled');
+    } catch (error) {
+        console.error('Error disabling board interaction:', error.message);
+    }
 }
 
 // Get all possible moves for a player
