@@ -500,6 +500,13 @@ function updateGameEndUI(winningPlayer) {
         // Clear current player highlighting
         clearPawnHighlights();
         
+        // Trigger winner modal display
+        if (typeof showWinnerModal === 'function') {
+            showWinnerModal(winningPlayer);
+        } else {
+            console.log('Winner modal function not yet implemented');
+        }
+        
         console.log('Game end UI updated');
         
     } catch (error) {
