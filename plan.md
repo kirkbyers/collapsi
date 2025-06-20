@@ -164,24 +164,33 @@ Collapsi is a 2-player strategy game where players move pawns on a collapsing 4x
 - Professional mobile-optimized styling (44px+ touch targets)
 - Keyboard accessibility (ESC, Tab navigation) and ARIA labels
 
-### Phase 6: Game Rules & Win Conditions ⚠️
-**Goal**: Complete the game logic - **PARTIALLY COMPLETED**
+### Phase 6: Game Rules & Win Conditions ✅
+**Goal**: Complete the game logic - **COMPLETED**
 
-** Step 6.1: Legal move detection in js/game.js**
-- getAllPossibleMoves() function exists but returns empty array (placeholder)
-- Comprehensive movement validation system exists in js/movement/ modules
-- Need to integrate validation system with legal move detection
-- All supporting functions available: position validation, path generation, distance checking
+**✅ Step 6.1: Legal Move Detection System**
+- Implemented comprehensive `getAllPossibleMoves()` function in js/game.js
+- Full integration with existing movement validation system in js/movement/ modules
+- Performance-optimized legal move detection (<100ms target achieved)
+- Complete support for both numbered cards and joker card movement
+- Handles all game rules: distance matching, card collapse, position occupation
 
-** Step 6.2: Win condition logic**
-- Complete win condition framework in checkGameEnd() function
-- Turn manager handles game end detection in checkNewPlayerValidMoves()
+**✅ Step 6.2: Win Condition Logic & Winner Modal**
+- Complete win condition detection in `checkGameEnd()` function
+- Automatic game end detection via turn manager `checkNewPlayerValidMoves()`
 - Winner determination logic (last player able to move wins)
-- Game status tracking (gameState.gameStatus, gameState.winner)
-- UI updates for game end (turn indicator shows "Game Over")
-- Depends on Step 6.1 for full functionality
+- Professional winner modal with confetti animation and player-specific styling
+- Modal dismissible via escape key, backdrop click, or close button
+- New Game functionality integrated with winner modal
 
-** Step 6.3: Game state persistence**
+**✅ Step 6.3: New Game Functionality**
+- Comprehensive `startNewGame()` function with complete state reset
+- Integration with hamburger menu and winner modal "New Game" button
+- Proper cleanup of game end states, modal restrictions, and UI highlights
+- Complete game state reset: board, players, turn management, move history
+- Error handling with fallback to page reload if reset fails
+- Reuses existing initialization logic for consistency
+
+**✅ Step 6.4: Game State Persistence**
 - Complete localStorage implementation in js/utils.js
 - saveGameState() and loadGameState() functions with JSON serialization
 - clearSavedGameState() and compatibility testing functions
@@ -302,7 +311,7 @@ collapsi/
 - ✅ Orthogonal movement with wraparound
 - ✅ Card collapse mechanics
 - ✅ Legal move validation (modular architecture)
-- ⚠️ Win condition detection (framework complete, needs legal move integration)
+- ✅ Win condition detection (complete with legal move integration)
 - ✅ Joker wild card support (complete state machine)
 - ✅ Performance-optimized validation (<100ms)
 - ✅ Path visualization and movement preview
@@ -310,7 +319,9 @@ collapsi/
 - ✅ Card collapse mechanics and visual updates
 - ✅ Turn switching and game flow control
 - ✅ Game state persistence (localStorage)
-- ❌ Legal move detection (placeholder function needs implementation)
+- ✅ Legal move detection (fully implemented and integrated)
+- ✅ Winner modal with confetti animation
+- ✅ New Game functionality (complete state reset)
 
 ### UI/UX Features
 - ✅ Mobile-first responsive design
@@ -325,6 +336,8 @@ collapsi/
 - ✅ "How to Play" dialog with complete rules
 - ✅ Professional error feedback (shake animations)
 - ✅ Keyboard accessibility and ARIA labels
+- ✅ Winner modal with confetti animation and game end celebration
+- ✅ Complete new game functionality accessible from multiple UI locations
 
 ### Multiplayer Features
 - ✅ Local same-device multiplayer
@@ -357,6 +370,7 @@ collapsi/
 - **Week 1-2**: ✅ Core game engine and movement system (COMPLETED)
 - **Week 2**: ✅ Move execution and game state management (COMPLETED)
 - **Week 3**: ✅ UI development and local multiplayer (COMPLETED)
+- **Week 3-4**: ✅ Game rules, win conditions, and new game functionality (COMPLETED)
 - **Week 4**: Mobile optimization and testing
 - **Week 5**: Backend development for online multiplayer
 - **Week 6**: Integration, testing, and deployment
@@ -405,6 +419,55 @@ A comprehensive move execution and game state management system has been impleme
 - Starting card collapse with visual feedback
 - Turn switching with game end detection
 - Full rendering integration with error rollback
+
+## Game Rules & Win Conditions System (Phase 6 - Completed)
+
+A comprehensive game rules and win condition system has been implemented to complete the core game logic:
+
+### Legal Move Detection System
+1. **getAllPossibleMoves() Implementation** (246 lines): Complete legal move detection algorithm
+   - Integrates with existing movement validation system in js/movement/ modules
+   - Performance-optimized with <100ms target achievement 
+   - Supports both numbered cards (exact distance) and joker cards (1-4 spaces)
+   - Handles all game rules: card collapse state, position occupation, path validation
+   - Uses breadth-first search for comprehensive move generation
+
+2. **Win Condition Detection** (134 lines): Automatic game end detection and winner determination
+   - checkGameEnd() function with complete logic integration
+   - Turn manager integration via checkNewPlayerValidMoves()
+   - Winner determination as last player able to make legal moves
+   - Game status tracking with proper state management
+   - UI updates and board interaction restrictions on game end
+
+3. **Winner Modal System** (1,053 lines): Professional game end celebration
+   - Winner modal with confetti animation and player-specific styling
+   - Multiple dismissal methods: escape key, backdrop click, close button
+   - Integrated with "New Game" functionality for seamless game flow
+   - Mobile-optimized with proper accessibility features
+   - Smooth animations and visual polish
+
+### New Game Functionality System
+1. **Complete State Reset** (117 lines): Comprehensive startNewGame() function
+   - Integration with hamburger menu and winner modal "New Game" button
+   - Complete game state reset: board, players, turn management, move history
+   - Proper cleanup of game end states, modal restrictions, UI highlights
+   - Reuses existing initialization logic (initializeNewGame, convertDeckToBoard)
+   - Error handling with fallback to page reload for robustness
+
+2. **UI Integration Points**:
+   - Winner modal "New Game" button (immediate reset after game end)
+   - Hamburger menu "New Game" option (reset during active gameplay)
+   - Confirmation dialog for games in progress to prevent accidental resets
+   - Turn indicator reset and current player highlighting
+   - Board rendering refresh with proper player positioning
+
+### Game Rules Implementation Benefits
+- **Complete Game Flow**: Full game lifecycle from start to win condition
+- **Professional UX**: Celebratory winner modal with smooth new game transition
+- **Performance Optimized**: Legal move detection maintains <100ms target
+- **State Consistency**: Comprehensive reset ensuring clean game restart
+- **Error Recovery**: Robust error handling with graceful fallbacks
+- **Integration Ready**: Seamless connection with all existing game systems
 
 ## Future Enhancements
 - Different board sizes (5x5, 6x6)
