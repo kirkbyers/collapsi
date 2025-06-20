@@ -19,15 +19,15 @@
 
 ## Tasks
 
-- [ ] 1.0 Implement Legal Move Detection System
-  - [ ] 1.1 Replace `getAllPossibleMoves()` placeholder in `js/game.js` with actual implementation
-  - [ ] 1.2 Import and integrate existing movement validation modules from `js/movement/`
-  - [ ] 1.3 Iterate through all board positions to find current player's pawns
-  - [ ] 1.4 For each pawn position, check all possible destination cards using existing validation
-  - [ ] 1.5 Handle both numbered cards and joker cards in move detection logic
-  - [ ] 1.6 Account for collapsed card state when determining valid destinations
-  - [ ] 1.7 Return array of move objects with source and destination positions
-  - [ ] 1.8 Add performance logging to ensure <100ms target is met
+- [x] 1.0 Implement Legal Move Detection System
+  - [x] 1.1 Replace `getAllPossibleMoves()` placeholder in `js/game.js` with actual implementation
+  - [x] 1.2 Import and integrate existing movement validation modules from `js/movement/`
+  - [x] 1.3 Iterate through all board positions to find current player's pawns
+  - [x] 1.4 For each pawn position, check all possible destination cards using existing validation
+  - [x] 1.5 Handle both numbered cards and joker cards in move detection logic
+  - [x] 1.6 Account for collapsed card state when determining valid destinations
+  - [x] 1.7 Return array of move objects with source and destination positions
+  - [x] 1.8 Add performance logging to ensure <100ms target is met
 
 - [ ] 2.0 Complete Win Condition Logic Integration
   - [ ] 2.1 Update `checkGameEnd()` function in `js/game.js` to use legal move detection

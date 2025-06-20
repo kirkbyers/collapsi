@@ -106,9 +106,170 @@ function checkGameEnd() {
 
 // Get all possible moves for a player
 function getAllPossibleMoves(player) {
-    // This will be implemented when we have movement validation
-    // For now, return empty array
-    return [];
+    const startTime = performance.now();
+    console.log(`Finding all legal moves for player: ${player.id}`);
+    
+    try {
+        if (!player || !player.position || !gameState.board) {
+            console.warn('Invalid player or game state for move detection');
+            return [];
+        }
+        
+        const playerPosition = player.position;
+        
+        // Validate player position is on board
+        if (playerPosition.row < 0 || playerPosition.row >= 4 || 
+            playerPosition.col < 0 || playerPosition.col >= 4) {
+            console.warn(`Player ${player.id} position out of bounds:`, playerPosition);
+            return [];
+        }
+        
+        const currentCard = gameState.board[playerPosition.row][playerPosition.col];
+        if (!currentCard) {
+            console.warn(`No card found at player position:`, playerPosition);
+            return [];
+        }
+        
+        const cardType = currentCard.type;
+        const cardMovement = getCardMovementDistance(cardType);
+        
+        if (!cardMovement) {
+            console.warn(`Cannot determine movement for card type: ${cardType}`);
+            return [];
+        }
+        
+        console.log(`Player ${player.id} on ${cardType} card at (${playerPosition.row}, ${playerPosition.col})`);
+        
+        const legalMoves = [];
+        
+        // Handle different card types
+        if (cardMovement.type === 'joker') {
+            // Joker cards can move 1-4 spaces
+            for (const distance of cardMovement.allowedDistances) {
+                const movesForDistance = findMovesForDistance(playerPosition, distance, cardType, player.id);
+                legalMoves.push(...movesForDistance);
+            }
+        } else if (cardMovement.type === 'fixed') {
+            // Numbered cards must move exact distance
+            const movesForDistance = findMovesForDistance(playerPosition, cardMovement.distance, cardType, player.id);
+            legalMoves.push(...movesForDistance);
+        }
+        
+        const endTime = performance.now();
+        const duration = endTime - startTime;
+        
+        console.log(`Found ${legalMoves.length} legal moves for ${player.id} in ${duration.toFixed(2)}ms`);
+        
+        if (duration > 100) {
+            console.warn(`Legal move detection exceeded 100ms target: ${duration.toFixed(2)}ms`);
+        }
+        
+        return legalMoves;
+    } catch (error) {
+        console.error('Error finding legal moves:', error.message);
+        return [];
+    }
+}
+
+// Helper function to find all valid moves for a specific distance
+function findMovesForDistance(startPosition, distance, cardType, playerId) {
+    console.log(`Finding moves from (${startPosition.row}, ${startPosition.col}) for distance ${distance}`);
+    
+    const validMoves = [];
+    
+    try {
+        // Use breadth-first search to find all valid paths of the exact distance
+        const queue = [{
+            position: startPosition,
+            path: [startPosition],
+            distance: 0
+        }];
+        
+        const visitedPaths = new Set();
+        
+        while (queue.length > 0) {
+            const current = queue.shift();
+            
+            // If we've reached the target distance, check if it's a valid end position
+            if (current.distance === distance) {
+                const endPosition = current.position;
+                
+                // Don't end on starting position
+                if (endPosition.row === startPosition.row && endPosition.col === startPosition.col) {
+                    continue;
+                }
+                
+                // Check if ending position is valid
+                const endingValidation = validateMoveEnding(
+                    startPosition, 
+                    endPosition, 
+                    gameState.board, 
+                    gameState.players, 
+                    playerId
+                );
+                
+                if (endingValidation.valid) {
+                    validMoves.push({
+                        start: { ...startPosition },
+                        end: { ...endPosition },
+                        path: current.path.map(pos => ({ ...pos })),
+                        distance: distance,
+                        cardType: cardType,
+                        playerId: playerId
+                    });
+                }
+                continue;
+            }
+            
+            // If not at target distance, continue exploring
+            if (current.distance < distance) {
+                const adjacentPositions = getAdjacentPositions(current.position);
+                
+                for (const adjacent of adjacentPositions) {
+                    const nextPos = adjacent.position;
+                    
+                    // Check if this position can be visited
+                    if (isPositionVisited(nextPos, current.path)) {
+                        continue; // Can't revisit positions
+                    }
+                    
+                    // Check if position is collapsed
+                    const collapseCheck = isCardCollapsed(nextPos, gameState.board);
+                    if (collapseCheck.collapsed) {
+                        continue; // Can't move through collapsed cards
+                    }
+                    
+                    // Check if position is occupied (but only for intermediate steps)
+                    const occupationCheck = isPositionOccupied(nextPos, gameState.board, gameState.players);
+                    if (occupationCheck.occupied && occupationCheck.occupiedBy !== playerId) {
+                        continue; // Can't move through opponent's position
+                    }
+                    
+                    // Create new path state
+                    const newPath = [...current.path, nextPos];
+                    const pathKey = newPath.map(p => `${p.row},${p.col}`).join('|');
+                    
+                    // Avoid exploring duplicate paths
+                    if (visitedPaths.has(pathKey)) {
+                        continue;
+                    }
+                    visitedPaths.add(pathKey);
+                    
+                    queue.push({
+                        position: nextPos,
+                        path: newPath,
+                        distance: current.distance + 1
+                    });
+                }
+            }
+        }
+        
+        console.log(`Found ${validMoves.length} valid moves for distance ${distance}`);
+        return validMoves;
+    } catch (error) {
+        console.error('Error finding moves for distance:', error.message);
+        return [];
+    }
 }
 
 // Add move to history
