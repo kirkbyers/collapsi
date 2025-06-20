@@ -40,6 +40,117 @@ let gameState = {
 
 console.log('Game state initialized:', gameState);
 
+// Start a complete new game (for winner modal and menu)
+function startNewGame() {
+    console.log('Starting new game from winner modal or menu...');
+    
+    try {
+        // Hide winner modal if visible
+        if (typeof hideWinnerModal === 'function') {
+            hideWinnerModal();
+        }
+        
+        // Clear any board interaction restrictions
+        const gameBoard = document.getElementById('game-board');
+        if (gameBoard) {
+            gameBoard.classList.remove('game-ended');
+            gameBoard.style.pointerEvents = 'auto';
+        }
+        
+        // Clear path and destination highlighting
+        if (typeof clearPathHighlighting === 'function') {
+            clearPathHighlighting();
+        }
+        if (typeof clearDestinationHighlighting === 'function') {
+            clearDestinationHighlighting();
+        }
+        
+        // Initialize the game using existing function
+        const shuffledDeck = initializeNewGame();
+        
+        if (!shuffledDeck) {
+            throw new Error('Failed to initialize new game');
+        }
+        
+        // Convert deck to board and setup positions
+        const newBoard = convertDeckToBoard(shuffledDeck);
+        
+        if (!newBoard) {
+            throw new Error('Failed to convert deck to board');
+        }
+        
+        // Set up the board and players
+        gameState.board = newBoard;
+        
+        // Create fresh players and set up their joker assignments
+        gameState.players = createPlayers();
+        if (!setupPlayerJokerAssignments()) {
+            throw new Error('Failed to set up player joker assignments');
+        }
+        
+        // Place players on their starting jokers
+        if (!placePlayersOnJokers()) {
+            throw new Error('Failed to place players on jokers');
+        }
+        
+        // Render the fresh game board
+        if (typeof renderBoardToDOM === 'function') {
+            renderBoardToDOM(gameState.board);
+        } else {
+            console.warn('renderBoardToDOM function not available');
+        }
+        
+        // Reset turn management state manually (no resetTurnManager function exists)
+        gameState.currentPlayer = 0; // Red player starts first
+        gameState.currentMovePath = [];
+        gameState.jokerMoveState = null;
+        gameState.turnHistory = [];
+        gameState.playerTurnStats = {};
+        gameState.currentTurnStartTime = new Date().toISOString();
+        
+        // Update turn indicator to show first player
+        if (typeof updateTurnIndicatorUI === 'function') {
+            updateTurnIndicatorUI(getCurrentPlayer());
+        } else {
+            // Update turn indicators manually
+            const turnIndicators = document.querySelectorAll('.turn-indicator, .current-player-indicator');
+            turnIndicators.forEach(indicator => {
+                indicator.textContent = 'Red Turn';
+                indicator.className = 'turn-indicator red-turn';
+            });
+        }
+        
+        // Highlight current player pawn
+        if (typeof highlightCurrentPlayerPawn === 'function') {
+            highlightCurrentPlayerPawn();
+        }
+        
+        // Start the game
+        if (startGame()) {
+            console.log('New game started successfully');
+            
+            // Clear localStorage to reset any persisted state
+            try {
+                localStorage.removeItem('collapsiGameState');
+            } catch (e) {
+                console.log('localStorage not available or no previous state to clear');
+            }
+            
+            return true;
+        } else {
+            throw new Error('Failed to start game after initialization');
+        }
+        
+    } catch (error) {
+        console.error('Error starting new game:', error.message);
+        
+        // Fallback: reload the page if all else fails
+        console.log('Falling back to page reload');
+        window.location.reload();
+        return false;
+    }
+}
+
 // Initialize new game function
 function initializeNewGame() {
     console.log('Initializing new game...');
