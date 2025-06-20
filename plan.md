@@ -197,8 +197,8 @@ Collapsi is a 2-player strategy game where players move pawns on a collapsing 4x
 - Save timestamp tracking and error handling
 - Auto-save integration ready
 
-### Phase 7: Polish & Mobile Optimization
-**Goal**: Make it feel professional
+### Phase 7: Polish & Mobile Optimization ⏭️
+**Goal**: Make it feel professional - **SKIPPED FOR NOW**
 
 **Step 7.1: Animations in css/styles.css**
 - CSS transitions for pawn movement
