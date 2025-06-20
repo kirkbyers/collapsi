@@ -26,6 +26,25 @@
         <p>Created by <a href="https://riffleshuffleandroll.itch.io/" target="_blank" rel="noopener">Riffle Shuffle and Roll</a></p>
     </footer>
     
+    <!-- Winner Modal -->
+    <div id="winner-modal" class="winner-dialog">
+        <div class="winner-content">
+            <div class="winner-header">
+                <h2 id="winner-title" class="winner-title">🎉 Red Wins! 🎉</h2>
+                <button id="winner-close-button" class="winner-close-button" aria-label="Close">×</button>
+            </div>
+            <div class="winner-body">
+                <div class="winner-message">
+                    <p id="winner-text">Congratulations! The game has ended.</p>
+                </div>
+                <div class="winner-actions">
+                    <button id="new-game-button" class="new-game-button">New Game</button>
+                </div>
+            </div>
+        </div>
+        <div class="confetti-container" id="confetti-container"></div>
+    </div>
+    
     <!-- JavaScript files must be loaded in dependency order -->
     <script src="js/utils.js"></script>
     

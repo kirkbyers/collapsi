@@ -781,3 +781,273 @@ function getDestinationInfo(row, col) {
 }
 
 console.log('Path visualization and destination highlighting functions loaded');
+
+// Winner Modal Functions
+
+// Show winner modal with confetti animation
+function showWinnerModal(winnerPlayer) {
+    console.log(`Showing winner modal for player: ${winnerPlayer.id} (${winnerPlayer.color})`);
+    
+    try {
+        const modal = document.getElementById('winner-modal');
+        const header = modal.querySelector('.winner-header');
+        const title = document.getElementById('winner-title');
+        const text = document.getElementById('winner-text');
+        
+        if (!modal || !header || !title || !text) {
+            console.error('Winner modal elements not found');
+            return false;
+        }
+        
+        // Update modal content with winner information
+        const colorName = winnerPlayer.color.charAt(0).toUpperCase() + winnerPlayer.color.slice(1);
+        const emoji = winnerPlayer.color === 'red' ? '🔴' : '🔵';
+        
+        title.textContent = `${emoji} ${colorName} Wins! ${emoji}`;
+        text.textContent = `Congratulations! ${colorName} player has won the game!`;
+        
+        // Apply winner-specific styling
+        header.className = `winner-header ${winnerPlayer.color}-winner`;
+        
+        // Show the modal
+        modal.classList.add('visible');
+        
+        // Create confetti animation
+        createConfettiAnimation();
+        
+        // Set up event listeners
+        setupWinnerModalEventListeners();
+        
+        console.log('Winner modal displayed successfully');
+        return true;
+        
+    } catch (error) {
+        console.error('Error showing winner modal:', error.message);
+        return false;
+    }
+}
+
+// Hide winner modal
+function hideWinnerModal() {
+    console.log('Hiding winner modal');
+    
+    try {
+        const modal = document.getElementById('winner-modal');
+        
+        if (!modal) {
+            console.error('Winner modal not found');
+            return false;
+        }
+        
+        // Hide the modal
+        modal.classList.remove('visible');
+        
+        // Clean up confetti
+        clearConfettiAnimation();
+        
+        // Remove event listeners to prevent memory leaks
+        removeWinnerModalEventListeners();
+        
+        console.log('Winner modal hidden successfully');
+        return true;
+        
+    } catch (error) {
+        console.error('Error hiding winner modal:', error.message);
+        return false;
+    }
+}
+
+// Set up event listeners for winner modal
+function setupWinnerModalEventListeners() {
+    console.log('Setting up winner modal event listeners');
+    
+    try {
+        const modal = document.getElementById('winner-modal');
+        const closeButton = document.getElementById('winner-close-button');
+        const newGameButton = document.getElementById('new-game-button');
+        
+        if (!modal || !closeButton || !newGameButton) {
+            console.error('Winner modal elements not found for event listeners');
+            return false;
+        }
+        
+        // Close button handler
+        closeButton.addEventListener('click', handleCloseWinnerModal);
+        
+        // New game button handler
+        newGameButton.addEventListener('click', handleNewGameFromModal);
+        
+        // Modal backdrop click handler (dismiss on blur)
+        modal.addEventListener('click', handleModalBackdropClick);
+        
+        // Prevent modal content clicks from bubbling to backdrop
+        const modalContent = modal.querySelector('.winner-content');
+        if (modalContent) {
+            modalContent.addEventListener('click', (e) => e.stopPropagation());
+        }
+        
+        // Escape key handler
+        document.addEventListener('keydown', handleModalEscapeKey);
+        
+        console.log('Winner modal event listeners set up successfully');
+        return true;
+        
+    } catch (error) {
+        console.error('Error setting up winner modal event listeners:', error.message);
+        return false;
+    }
+}
+
+// Remove event listeners for winner modal
+function removeWinnerModalEventListeners() {
+    console.log('Removing winner modal event listeners');
+    
+    try {
+        const modal = document.getElementById('winner-modal');
+        const closeButton = document.getElementById('winner-close-button');
+        const newGameButton = document.getElementById('new-game-button');
+        
+        if (closeButton) {
+            closeButton.removeEventListener('click', handleCloseWinnerModal);
+        }
+        
+        if (newGameButton) {
+            newGameButton.removeEventListener('click', handleNewGameFromModal);
+        }
+        
+        if (modal) {
+            modal.removeEventListener('click', handleModalBackdropClick);
+        }
+        
+        document.removeEventListener('keydown', handleModalEscapeKey);
+        
+        console.log('Winner modal event listeners removed');
+        return true;
+        
+    } catch (error) {
+        console.error('Error removing winner modal event listeners:', error.message);
+        return false;
+    }
+}
+
+// Handle close button click
+function handleCloseWinnerModal(event) {
+    console.log('Close winner modal button clicked');
+    event.preventDefault();
+    hideWinnerModal();
+}
+
+// Handle new game button click
+function handleNewGameFromModal(event) {
+    console.log('New game button clicked from winner modal');
+    event.preventDefault();
+    
+    // Hide modal first
+    hideWinnerModal();
+    
+    // Start new game (this function should be implemented in game.js)
+    if (typeof startNewGame === 'function') {
+        startNewGame();
+    } else if (typeof initializeNewGame === 'function') {
+        // Fallback to initialization function
+        console.log('startNewGame not found, calling initializeNewGame');
+        initializeNewGame();
+        
+        // You might need to add additional game setup here
+        if (typeof startGame === 'function') {
+            startGame();
+        }
+    } else {
+        console.warn('No new game function found - implement startNewGame() in game.js');
+        // As a fallback, reload the page
+        window.location.reload();
+    }
+}
+
+// Handle modal backdrop click (dismiss on blur)
+function handleModalBackdropClick(event) {
+    if (event.target === event.currentTarget) {
+        console.log('Winner modal backdrop clicked');
+        hideWinnerModal();
+    }
+}
+
+// Handle escape key press
+function handleModalEscapeKey(event) {
+    if (event.key === 'Escape') {
+        const modal = document.getElementById('winner-modal');
+        if (modal && modal.classList.contains('visible')) {
+            console.log('Escape key pressed, closing winner modal');
+            hideWinnerModal();
+        }
+    }
+}
+
+// Create confetti animation
+function createConfettiAnimation() {
+    console.log('Creating confetti animation');
+    
+    try {
+        const confettiContainer = document.getElementById('confetti-container');
+        
+        if (!confettiContainer) {
+            console.error('Confetti container not found');
+            return false;
+        }
+        
+        // Clear existing confetti
+        confettiContainer.innerHTML = '';
+        
+        // Create confetti pieces
+        const colors = ['#FFD700', '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7'];
+        const pieceCount = 50;
+        
+        for (let i = 0; i < pieceCount; i++) {
+            const piece = document.createElement('div');
+            piece.className = 'confetti-piece';
+            
+            // Random horizontal position
+            piece.style.left = Math.random() * 100 + '%';
+            
+            // Random animation delay
+            piece.style.animationDelay = Math.random() * 3 + 's';
+            
+            // Random color
+            piece.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            
+            // Random animation duration
+            piece.style.animationDuration = (Math.random() * 2 + 2) + 's';
+            
+            confettiContainer.appendChild(piece);
+        }
+        
+        console.log(`Created ${pieceCount} confetti pieces`);
+        return true;
+        
+    } catch (error) {
+        console.error('Error creating confetti animation:', error.message);
+        return false;
+    }
+}
+
+// Clear confetti animation
+function clearConfettiAnimation() {
+    console.log('Clearing confetti animation');
+    
+    try {
+        const confettiContainer = document.getElementById('confetti-container');
+        
+        if (confettiContainer) {
+            confettiContainer.innerHTML = '';
+        }
+        
+        console.log('Confetti animation cleared');
+        return true;
+        
+    } catch (error) {
+        console.error('Error clearing confetti animation:', error.message);
+        return false;
+    }
+}
+
+console.log('Winner modal functions loaded');

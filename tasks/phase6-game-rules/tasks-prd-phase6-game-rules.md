@@ -37,14 +37,14 @@
   - [x] 2.5 Trigger winner modal display when game ends
   - [x] 2.6 Update turn indicator to show "Game Over" state
 
-- [ ] 3.0 Create Winner Modal UI Component
-  - [ ] 3.1 Create modal HTML structure (JavaScript-generated or static in index.html)
-  - [ ] 3.2 Add "[Color] Wins" message with dynamic color insertion
-  - [ ] 3.3 Include "New Game" button with proper event handling
-  - [ ] 3.4 Make modal dismissible on blur (clicking outside modal area)
-  - [ ] 3.5 Center modal over game board with proper z-index layering
-  - [ ] 3.6 Prevent board interaction while modal is displayed
-  - [ ] 3.7 Add confetti animation when modal appears
+- [x] 3.0 Create Winner Modal UI Component
+  - [x] 3.1 Create modal HTML structure (JavaScript-generated or static in index.html)
+  - [x] 3.2 Add "[Color] Wins" message with dynamic color insertion
+  - [x] 3.3 Include "New Game" button with proper event handling
+  - [x] 3.4 Make modal dismissible on blur (clicking outside modal area)
+  - [x] 3.5 Center modal over game board with proper z-index layering
+  - [x] 3.6 Prevent board interaction while modal is displayed
+  - [x] 3.7 Add confetti animation when modal appears
 
 - [ ] 4.0 Integrate Game End Detection with Turn Management
   - [ ] 4.1 Connect legal move detection to turn switching logic in turn manager
