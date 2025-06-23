@@ -63,7 +63,7 @@ Based on PRD: `prd-javascript-testing.md`
   - [x] 3.2 Create unit tests for js/board.js (board management and validation)
   - [x] 3.3 Create unit tests for js/player.js (player positioning and logic)
   - [x] 3.4 Create unit tests for js/utils.js (utility functions)
-  - [ ] 3.5 Create unit tests for movement/core/ modules (card movement, position utils, path validation)
+  - [x] 3.5 Create unit tests for movement/core/ modules (card movement, position utils, path validation)
   - [ ] 3.6 Create unit tests for movement/validation/ modules (ending rules, optimization, orchestration)
   - [ ] 3.7 Create unit tests for movement/joker/ modules (state management, validation, completion)
   - [ ] 3.8 Create unit tests for movement/visualization/ modules (path highlighting)
