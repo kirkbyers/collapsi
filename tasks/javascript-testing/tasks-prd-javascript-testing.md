@@ -12,8 +12,8 @@ Based on PRD: `prd-javascript-testing.md`
 - `tests/utils/game-fixtures.js` - Pre-built game state scenarios for testing (completed)
 - `tests/utils/dom-mocks.js` - DOM and browser API mocking utilities (completed)
 - `tests/utils/test-cleanup.js` - Shared beforeEach/afterEach cleanup utilities (completed)
-- `js/game.test.js` - Unit tests for core game logic
-- `js/board.test.js` - Unit tests for board management
+- `js/game.test.js` - Unit tests for core game logic (completed)
+- `js/board.test.js` - Unit tests for board management (completed)
 - `js/player.test.js` - Unit tests for player/pawn logic
 - `js/utils.test.js` - Unit tests for utility functions
 - `js/movement/core/card-movement.test.js` - Unit tests for card movement logic
@@ -59,8 +59,8 @@ Based on PRD: `prd-javascript-testing.md`
   - [x] 2.6 Set up shared beforeEach/afterEach cleanup utilities
 
 - [ ] 3.0 Implement Unit Tests for Critical Game Logic
-  - [ ] 3.1 Create unit tests for js/game.js (game state, rules, win conditions)
-  - [ ] 3.2 Create unit tests for js/board.js (board management and validation)
+  - [x] 3.1 Create unit tests for js/game.js (game state, rules, win conditions)
+  - [x] 3.2 Create unit tests for js/board.js (board management and validation)
   - [ ] 3.3 Create unit tests for js/player.js (player positioning and logic)
   - [ ] 3.4 Create unit tests for js/utils.js (utility functions)
   - [ ] 3.5 Create unit tests for movement/core/ modules (card movement, position utils, path validation)

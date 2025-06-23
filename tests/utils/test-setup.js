@@ -62,15 +62,19 @@ afterEach(() => {
   // Clear all mocks
   jest.clearAllMocks();
   
-  // Reset localStorage mocks
-  window.localStorage.getItem.mockReset();
-  window.localStorage.setItem.mockReset();
-  window.localStorage.removeItem.mockReset();
-  window.localStorage.clear.mockReset();
+  // Reset localStorage mocks if they exist
+  if (window.localStorage && window.localStorage.getItem && window.localStorage.getItem.mockReset) {
+    window.localStorage.getItem.mockReset();
+    window.localStorage.setItem.mockReset();
+    window.localStorage.removeItem.mockReset();
+    window.localStorage.clear.mockReset();
+  }
   
-  // Reset sessionStorage mocks
-  window.sessionStorage.getItem.mockReset();
-  window.sessionStorage.setItem.mockReset();
-  window.sessionStorage.removeItem.mockReset();
-  window.sessionStorage.clear.mockReset();
+  // Reset sessionStorage mocks if they exist
+  if (window.sessionStorage && window.sessionStorage.getItem && window.sessionStorage.getItem.mockReset) {
+    window.sessionStorage.getItem.mockReset();
+    window.sessionStorage.setItem.mockReset();
+    window.sessionStorage.removeItem.mockReset();
+    window.sessionStorage.clear.mockReset();
+  }
 });
