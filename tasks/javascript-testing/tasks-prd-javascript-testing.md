@@ -22,9 +22,9 @@ Based on PRD: `prd-javascript-testing.md`
 - `js/movement/validation/ending-validator.test.js` - Unit tests for move ending rules (completed)
 - `js/movement/validation/optimized-validator.test.js` - Unit tests for optimized validation (completed)
 - `js/movement/validation/movement-validator.test.js` - Unit tests for main validation (completed)
-- `js/movement/joker/joker-state.test.js` - Unit tests for joker state management
-- `js/movement/joker/joker-validator.test.js` - Unit tests for joker validation
-- `js/movement/joker/joker-completion.test.js` - Unit tests for joker completion
+- `js/movement/joker/joker-state.test.js` - Unit tests for joker state management (completed)
+- `js/movement/joker/joker-validator.test.js` - Unit tests for joker validation (completed)
+- `js/movement/joker/joker-completion.test.js` - Unit tests for joker completion (completed)
 - `js/movement/visualization/path-highlighter.test.js` - Unit tests for path visualization
 - `js/movement/execution/move-executor.test.js` - Unit tests for move execution
 - `js/movement/execution/board-state-manager.test.js` - Unit tests for board state management
@@ -65,7 +65,8 @@ Based on PRD: `prd-javascript-testing.md`
   - [x] 3.4 Create unit tests for js/utils.js (utility functions)
   - [x] 3.5 Create unit tests for movement/core/ modules (card movement, position utils, path validation)
   - [x] 3.6 Create unit tests for movement/validation/ modules (ending rules, optimization, orchestration)
-  - [ ] 3.7 Create unit tests for movement/joker/ modules (state management, validation, completion)
+  - [x] 3.7 Create unit tests for movement/joker/ modules (state management, validation, completion)
+  - [ ] 3.7.1 Fix outstanding joker test failures (6 failing tests in joker modules)
   - [ ] 3.8 Create unit tests for movement/visualization/ modules (path highlighting)
   - [ ] 3.9 Create unit tests for movement/execution/ modules (move execution, board state, turn management)
 
