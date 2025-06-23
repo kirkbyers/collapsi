@@ -4,8 +4,10 @@ Based on PRD: `prd-javascript-testing.md`
 
 ## Relevant Files
 
-- `package.json` - Add Jest dependency and test scripts
-- `jest.config.js` - Jest configuration for ES6 modules and mocking
+- `package.json` - Jest dependency and test scripts (completed)
+- `jest.config.js` - Jest configuration for ES6 modules and mocking (completed)
+- `.babelrc` - Babel configuration for ES6 module transformation (completed)
+- `tests/utils/test-setup.js` - Jest setup file with DOM/localStorage mocking (completed)
 - `tests/utils/test-helpers.js` - Shared test utilities and fixtures
 - `tests/utils/game-fixtures.js` - Pre-built game state scenarios for testing
 - `tests/utils/dom-mocks.js` - DOM and browser API mocking utilities
@@ -40,12 +42,12 @@ Based on PRD: `prd-javascript-testing.md`
 
 ## Tasks
 
-- [ ] 1.0 Set up Jest Testing Framework and Configuration
-  - [ ] 1.1 Initialize package.json with Jest dependency and test scripts
-  - [ ] 1.2 Create jest.config.js with ES6 module support and DOM mocking
-  - [ ] 1.3 Configure Jest for parallel execution and fast feedback
-  - [ ] 1.4 Set up test file discovery patterns and ignore rules
-  - [ ] 1.5 Verify Jest installation with a simple smoke test
+- [x] 1.0 Set up Jest Testing Framework and Configuration
+  - [x] 1.1 Initialize package.json with Jest dependency and test scripts
+  - [x] 1.2 Create jest.config.js with ES6 module support and DOM mocking
+  - [x] 1.3 Configure Jest for parallel execution and fast feedback
+  - [x] 1.4 Set up test file discovery patterns and ignore rules
+  - [x] 1.5 Verify Jest installation with a simple smoke test
 
 - [ ] 2.0 Create Testing Infrastructure and Utilities
   - [ ] 2.1 Create tests/utils/ directory structure
