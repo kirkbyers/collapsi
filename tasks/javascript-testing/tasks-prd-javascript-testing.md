@@ -8,9 +8,10 @@ Based on PRD: `prd-javascript-testing.md`
 - `jest.config.js` - Jest configuration for ES6 modules and mocking (completed)
 - `.babelrc` - Babel configuration for ES6 module transformation (completed)
 - `tests/utils/test-setup.js` - Jest setup file with DOM/localStorage mocking (completed)
-- `tests/utils/test-helpers.js` - Shared test utilities and fixtures
-- `tests/utils/game-fixtures.js` - Pre-built game state scenarios for testing
-- `tests/utils/dom-mocks.js` - DOM and browser API mocking utilities
+- `tests/utils/test-helpers.js` - Shared test utilities and fixtures (completed)
+- `tests/utils/game-fixtures.js` - Pre-built game state scenarios for testing (completed)
+- `tests/utils/dom-mocks.js` - DOM and browser API mocking utilities (completed)
+- `tests/utils/test-cleanup.js` - Shared beforeEach/afterEach cleanup utilities (completed)
 - `js/game.test.js` - Unit tests for core game logic
 - `js/board.test.js` - Unit tests for board management
 - `js/player.test.js` - Unit tests for player/pawn logic
@@ -49,13 +50,13 @@ Based on PRD: `prd-javascript-testing.md`
   - [x] 1.4 Set up test file discovery patterns and ignore rules
   - [x] 1.5 Verify Jest installation with a simple smoke test
 
-- [ ] 2.0 Create Testing Infrastructure and Utilities
-  - [ ] 2.1 Create tests/utils/ directory structure
-  - [ ] 2.2 Implement test-helpers.js with common assertion utilities
-  - [ ] 2.3 Create game-fixtures.js with pre-built board states and scenarios
-  - [ ] 2.4 Implement dom-mocks.js for localStorage and DOM API mocking
-  - [ ] 2.5 Create factory functions for generating test game states
-  - [ ] 2.6 Set up shared beforeEach/afterEach cleanup utilities
+- [x] 2.0 Create Testing Infrastructure and Utilities
+  - [x] 2.1 Create tests/utils/ directory structure
+  - [x] 2.2 Implement test-helpers.js with common assertion utilities
+  - [x] 2.3 Create game-fixtures.js with pre-built board states and scenarios
+  - [x] 2.4 Implement dom-mocks.js for localStorage and DOM API mocking
+  - [x] 2.5 Create factory functions for generating test game states
+  - [x] 2.6 Set up shared beforeEach/afterEach cleanup utilities
 
 - [ ] 3.0 Implement Unit Tests for Critical Game Logic
   - [ ] 3.1 Create unit tests for js/game.js (game state, rules, win conditions)
