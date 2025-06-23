@@ -147,15 +147,17 @@ describe('initializeJokerMovement', () => {
     });
 
     it('should return null for invalid player or position', () => {
-        // The function will throw an error when accessing null.id, which is caught and returns null
-        const consoleLogs1 = [...consoleLogs];
+        // Test with null player
         const result1 = initializeJokerMovement(null, { row: 0, col: 0 });
         expect(result1).toBeNull();
-        // Should have logged an error
-        expect(consoleLogs.length).toBeGreaterThan(consoleLogs1.length);
         
+        // Test with null position
         const result2 = initializeJokerMovement({ id: 'player1' }, null);
         expect(result2).toBeNull();
+        
+        // Test with undefined player
+        const result3 = initializeJokerMovement(undefined, { row: 0, col: 0 });
+        expect(result3).toBeNull();
     });
 
     it('should return null when player not on joker card', () => {

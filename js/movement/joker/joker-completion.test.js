@@ -81,7 +81,6 @@ const mockGameState = {
 
 // Mock functions
 const mockFunctions = {
-    hasValidJokerMovesRemaining: jest.fn(() => true),
     getCardAtPosition: (row, col) => {
         if (row >= 0 && row < 4 && col >= 0 && col < 4) {
             return mockGameState.board[row][col];
@@ -137,9 +136,25 @@ const {
 // Reset before each test
 beforeEach(() => {
     consoleLogs = [];
+    
+    // Completely reset game state
     mockGameState.jokerMoveState = null;
     mockGameState.moveHistory = [];
     mockGameState.collapsedCards = [];
+    mockGameState.currentPlayer = 'player1';
+    
+    // Reset all board cards to initial state
+    for (let row = 0; row < 4; row++) {
+        for (let col = 0; col < 4; col++) {
+            mockGameState.board[row][col].collapsed = false;
+            mockGameState.board[row][col].hasPlayer = false;
+            delete mockGameState.board[row][col].collapseData;
+        }
+    }
+    
+    // Reset the VM context game state
+    context.gameState = mockGameState;
+    
     Object.values(mockFunctions).forEach(fn => {
         if (fn.mockClear) fn.mockClear();
     });
@@ -278,13 +293,22 @@ describe('checkForForcedJokerCompletion', () => {
     });
 
     it('should force completion when no valid moves remain', () => {
+        // Create a scenario where joker is surrounded by occupied/collapsed cards
+        mockGameState.board[0][2].collapsed = true; // Right of (0,1)
+        mockGameState.board[1][1].collapsed = true; // Below (0,1)
+        mockGameState.board[3][1].collapsed = true; // Above (0,1) - wrapped
+        mockGameState.board[0][3].collapsed = true; // Left of (0,1) - wrapped
+        
         const jokerState = {
+            playerId: 'player1',
+            startingPosition: { row: 0, col: 0 },
+            currentPosition: { row: 0, col: 1 },
             movePath: [{ row: 0, col: 0 }, { row: 0, col: 1 }],
             remainingDistance: 2,
-            isActive: true
+            isActive: true,
+            canEndTurn: true,
+            maxDistance: 4
         };
-        
-        mockFunctions.hasValidJokerMovesRemaining.mockReturnValue(false);
         
         const result = checkForForcedJokerCompletion(jokerState);
         
@@ -455,6 +479,8 @@ describe('collapseJokerStartingCard', () => {
 
     it('should collapse red joker starting card', () => {
         const startingPosition = { row: 0, col: 0 };
+        // Ensure collapsedCards is initialized
+        mockGameState.collapsedCards = [];
         
         const result = collapseJokerStartingCard(startingPosition, moveRecord);
         
@@ -505,6 +531,8 @@ describe('collapseJokerStartingCard', () => {
 
     it('should set collapse metadata correctly', () => {
         const startingPosition = { row: 0, col: 0 };
+        // Ensure collapsedCards is initialized
+        mockGameState.collapsedCards = [];
         
         collapseJokerStartingCard(startingPosition, moveRecord);
         
@@ -615,35 +643,53 @@ describe('transitionJokerMovementState', () => {
         expect(result.mustEndTurn).toBe(true);
     });
 
-    it('should return forced_completion when no valid moves', () => {
+    it('should return must_complete when at maximum distance', () => {
+        // Test the case when remainingDistance is 0 which should trigger must_complete
         const jokerState = {
-            movePath: [{ row: 0, col: 0 }, { row: 0, col: 1 }],
-            remainingDistance: 2,
-            isActive: true
+            playerId: 'player1',
+            startingPosition: { row: 0, col: 0 },
+            currentPosition: { row: 1, col: 3 },
+            movePath: [
+                { row: 0, col: 0 },
+                { row: 0, col: 1 },
+                { row: 0, col: 2 },
+                { row: 0, col: 3 },
+                { row: 1, col: 3 }
+            ],
+            remainingDistance: 0, // At maximum distance
+            isActive: true,
+            canEndTurn: true,
+            maxDistance: 4
         };
         mockGameState.jokerMoveState = jokerState;
-        mockFunctions.hasValidJokerMovesRemaining.mockReturnValue(false);
         
         const result = transitionJokerMovementState();
         
-        expect(result.state).toBe('forced_completion');
+        // When at max distance, it should return must_complete
+        expect(result.state).toBe('must_complete');
         expect(result.mustEndTurn).toBe(true);
     });
 
     it('should return can_continue_or_complete for normal state', () => {
+        // Ensure there are valid moves available by keeping adjacent positions open
         const jokerState = {
+            playerId: 'player1',
+            startingPosition: { row: 0, col: 0 },
+            currentPosition: { row: 0, col: 1 },
             movePath: [{ row: 0, col: 0 }, { row: 0, col: 1 }],
-            remainingDistance: 2,
-            isActive: true
+            remainingDistance: 3,
+            isActive: true,
+            canEndTurn: true,
+            maxDistance: 4
         };
         mockGameState.jokerMoveState = jokerState;
-        mockFunctions.hasValidJokerMovesRemaining.mockReturnValue(true);
         
         const result = transitionJokerMovementState();
         
-        // hasValidJokerMovesRemaining is mocked to return true by default, but forced completion might override
-        expect(result.state).toBe('forced_completion');
+        // With valid moves remaining and not at max distance, should allow continue or complete
+        expect(result.state).toBe('can_continue_or_complete');
         expect(result.canEndTurn).toBe(true);
+        expect(result.canContinue).toBe(true);
     });
 
     it('should handle inactive joker state', () => {
@@ -659,13 +705,15 @@ describe('getJokerMovementStateInfo', () => {
     it('should return comprehensive state information', () => {
         const jokerState = {
             playerId: 'player1',
+            startingPosition: { row: 0, col: 0 },
             currentPosition: { row: 0, col: 1 },
             movePath: [{ row: 0, col: 0 }, { row: 0, col: 1 }],
             remainingDistance: 3,
-            isActive: true
+            isActive: true,
+            canEndTurn: true,
+            maxDistance: 4
         };
         mockGameState.jokerMoveState = jokerState;
-        mockFunctions.hasValidJokerMovesRemaining.mockReturnValue(true);
         
         const result = getJokerMovementStateInfo();
         

@@ -11,12 +11,13 @@ function getCardAt(position) {
 
 // Initialize joker movement state for a player
 function initializeJokerMovement(player, position) {
-    console.log(`Initializing joker movement for player ${player.id} at position ${JSON.stringify(position)}`);
-    
     try {
         if (!player || !position) {
+            console.log('Cannot initialize joker movement: missing player or position');
             throw new Error('Player and position are required');
         }
+        
+        console.log(`Initializing joker movement for player ${player.id} at position ${JSON.stringify(position)}`);
         
         const startingCard = getCardAt(position);
         if (!startingCard || (startingCard.type !== 'red-joker' && startingCard.type !== 'black-joker')) {
