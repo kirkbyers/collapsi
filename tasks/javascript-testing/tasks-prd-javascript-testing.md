@@ -25,12 +25,12 @@ Based on PRD: `prd-javascript-testing.md`
 - `js/movement/joker/joker-state.test.js` - Unit tests for joker state management (completed)
 - `js/movement/joker/joker-validator.test.js` - Unit tests for joker validation (completed)
 - `js/movement/joker/joker-completion.test.js` - Unit tests for joker completion (completed)
-- `js/movement/visualization/path-highlighter.test.js` - Unit tests for path visualization
-- `js/movement/execution/move-executor.test.js` - Unit tests for move execution
-- `js/movement/execution/board-state-manager.test.js` - Unit tests for board state management
-- `js/movement/execution/card-collapse-manager.test.js` - Unit tests for card collapse
-- `js/movement/execution/turn-manager.test.js` - Unit tests for turn management
-- `js/movement/execution/rendering-integration.test.js` - Unit tests for rendering integration
+- `js/movement/visualization/path-highlighter.test.js` - Unit tests for path visualization (completed)
+- `js/movement/execution/move-executor.test.js` - Unit tests for move execution (completed)
+- `js/movement/execution/board-state-manager.test.js` - Unit tests for board state management (completed)
+- `js/movement/execution/card-collapse-manager.test.js` - Unit tests for card collapse (completed)
+- `js/movement/execution/turn-manager.test.js` - Unit tests for turn management (completed)
+- `js/movement/execution/rendering-integration.test.js` - Unit tests for rendering integration (completed)
 - `tests/integration/movement/complete-movement-flows.test.js` - Integration tests for movement system
 - `tests/integration/game-flow/full-game-scenarios.test.js` - Integration tests for complete games
 - `tests/integration/ui-integration/touch-controls.test.js` - Integration tests for UI interactions
@@ -58,7 +58,7 @@ Based on PRD: `prd-javascript-testing.md`
   - [x] 2.5 Create factory functions for generating test game states
   - [x] 2.6 Set up shared beforeEach/afterEach cleanup utilities
 
-- [ ] 3.0 Implement Unit Tests for Critical Game Logic
+- [x] 3.0 Implement Unit Tests for Critical Game Logic
   - [x] 3.1 Create unit tests for js/game.js (game state, rules, win conditions)
   - [x] 3.2 Create unit tests for js/board.js (board management and validation)
   - [x] 3.3 Create unit tests for js/player.js (player positioning and logic)
@@ -67,8 +67,8 @@ Based on PRD: `prd-javascript-testing.md`
   - [x] 3.6 Create unit tests for movement/validation/ modules (ending rules, optimization, orchestration)
   - [x] 3.7 Create unit tests for movement/joker/ modules (state management, validation, completion)
   - [x] 3.7.1 Fix outstanding joker test failures (reduced from 6 to 1 failing test, remaining test passes in isolation)
-  - [ ] 3.8 Create unit tests for movement/visualization/ modules (path highlighting)
-  - [ ] 3.9 Create unit tests for movement/execution/ modules (move execution, board state, turn management)
+  - [x] 3.8 Create unit tests for movement/visualization/ modules (path highlighting)
+  - [x] 3.9 Create unit tests for movement/execution/ modules (move execution, board state, turn management)
 
 - [ ] 4.0 Implement Integration Tests for Game Flows
   - [ ] 4.1 Create tests/integration/ directory structure organized by functionality
