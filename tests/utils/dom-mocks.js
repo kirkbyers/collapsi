@@ -521,6 +521,9 @@ export const setupDOMMocks = () => {
   global.sessionStorage = mockWindow.sessionStorage;
   global.performance = mockWindow.performance;
   
+  // Add window dimension helper directly to window object
+  global.window._setDimensions = mockWindow._setDimensions;
+  
   // Set up common DOM methods on global scope
   global.Element = function() {};
   global.HTMLElement = function() {};

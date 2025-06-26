@@ -252,6 +252,13 @@ export const testUtils = {
       }
     }
     return moves;
+  },
+
+  /**
+   * Sleep for a given number of milliseconds
+   */
+  sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
   }
 };
 
