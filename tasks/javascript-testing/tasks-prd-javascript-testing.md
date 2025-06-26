@@ -31,7 +31,7 @@ Based on PRD: `prd-javascript-testing.md`
 - `js/movement/execution/card-collapse-manager.test.js` - Unit tests for card collapse (completed)
 - `js/movement/execution/turn-manager.test.js` - Unit tests for turn management (completed)
 - `js/movement/execution/rendering-integration.test.js` - Unit tests for rendering integration (completed)
-- `tests/integration/movement/complete-movement-flows.test.js` - Integration tests for movement system
+- `tests/integration/movement/complete-movement-flows.test.js` - Integration tests for movement system (completed)
 - `tests/integration/game-flow/full-game-scenarios.test.js` - Integration tests for complete games
 - `tests/integration/ui-integration/touch-controls.test.js` - Integration tests for UI interactions
 
@@ -71,8 +71,8 @@ Based on PRD: `prd-javascript-testing.md`
   - [x] 3.9 Create unit tests for movement/execution/ modules (move execution, board state, turn management)
 
 - [ ] 4.0 Implement Integration Tests for Game Flows
-  - [ ] 4.1 Create tests/integration/ directory structure organized by functionality
-  - [ ] 4.2 Implement complete movement flow integration tests (validation → execution → rendering)
+  - [x] 4.1 Create tests/integration/ directory structure organized by functionality
+  - [x] 4.2 Implement complete movement flow integration tests (validation → execution → rendering)
   - [ ] 4.3 Implement full game scenario integration tests (start → moves → win conditions)
   - [ ] 4.4 Create UI integration tests for touch controls and user interactions
   - [ ] 4.5 Test error handling and edge cases across module boundaries
