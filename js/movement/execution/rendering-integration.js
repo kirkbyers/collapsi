@@ -1,6 +1,10 @@
 // Collapsi Game - Rendering Integration System
 // Task 4.5: Integrate move execution with existing board rendering system
 
+// Import dependencies - using conditional imports for test compatibility
+// In test environment, these functions will be mocked on global scope
+// In browser environment, they are already available globally
+
 // Main integration function to execute move with full rendering updates
 function executeMovWithRendering(startingPosition, destinationPosition, path, cardType, currentPlayerId) {
     console.log('Executing move with full rendering integration');
@@ -54,13 +58,13 @@ function createMoveExecutionContext(startingPosition, destinationPosition, path,
                 path,
                 cardType,
                 playerId: currentPlayerId,
-                distance: path.length - 1,
+                distance: path ? path.length - 1 : 0,
                 timestamp: new Date().toISOString()
             },
             gameState: {
-                board: gameState.board,
-                players: gameState.players,
-                currentPlayer: gameState.currentPlayer
+                board: window.gameState?.board || [],
+                players: window.gameState?.players || [],
+                currentPlayer: window.gameState?.currentPlayer || 0
             },
             renderingSteps: [],
             valid: true
@@ -154,10 +158,10 @@ function executeCoordinatedMove(context) {
             moveData.playerId
         );
         
-        if (!moveExecutionResult.success) {
+        if (!moveExecutionResult || !moveExecutionResult.success) {
             // Rollback rendering changes
             rollbackRenderingChanges(context);
-            return moveExecutionResult;
+            return moveExecutionResult || { success: false, reason: 'Move execution failed' };
         }
         
         // Step 3: Post-execution rendering updates
@@ -327,7 +331,8 @@ function renderAffectedPositions(moveData) {
             const card = getCardAtPosition(position.row, position.col);
             if (card) {
                 const updateResult = updateCardDisplay(position.row, position.col, card);
-                if (updateResult) {
+                // Count successful rendering - updateCardDisplay returns truthy on success
+                if (updateResult !== false && updateResult !== null && updateResult !== undefined) {
                     renderedCount++;
                 }
             }
@@ -357,7 +362,7 @@ function updatePlayerPawnRendering(moveData) {
         // Remove pawn from starting position visually
         clearPositionMarking(moveData.startingPosition);
         
-        // Add pawn to destination position visually
+        // Get player for pawn rendering
         const player = getPlayerById(moveData.playerId);
         if (!player) {
             return {
@@ -373,7 +378,7 @@ function updatePlayerPawnRendering(moveData) {
             moveData.destinationPosition.col
         );
         
-        if (!pawnUpdateResult) {
+        if (pawnUpdateResult === false) {
             return {
                 success: false,
                 reason: 'Failed to update pawn position'
@@ -451,14 +456,16 @@ function highlightExecutionPath(path, cardType) {
         }
         
         // Add execution-specific styling
-        path.forEach((position, index) => {
-            const cardElement = document.querySelector(`[data-row="${position.row}"][data-col="${position.col}"]`);
-            if (cardElement) {
-                cardElement.classList.add('executing-move');
-                if (index === 0) cardElement.classList.add('execution-start');
-                if (index === path.length - 1) cardElement.classList.add('execution-end');
-            }
-        });
+        if (typeof document !== 'undefined' && document) {
+            path.forEach((position, index) => {
+                const cardElement = document.querySelector(`[data-row="${position.row}"][data-col="${position.col}"]`);
+                if (cardElement) {
+                    cardElement.classList.add('executing-move');
+                    if (index === 0) cardElement.classList.add('execution-start');
+                    if (index === path.length - 1) cardElement.classList.add('execution-end');
+                }
+            });
+        }
         
         return {
             success: true,
@@ -479,10 +486,12 @@ function markPositionForExecution(position, type) {
     console.log(`Marking position (${position.row}, ${position.col}) as ${type}`);
     
     try {
-        const cardElement = document.querySelector(`[data-row="${position.row}"][data-col="${position.col}"]`);
-        if (cardElement) {
-            cardElement.classList.add(`execution-${type}`);
-            cardElement.dataset.executionRole = type;
+        if (typeof document !== 'undefined') {
+            const cardElement = document.querySelector(`[data-row="${position.row}"][data-col="${position.col}"]`);
+            if (cardElement) {
+                cardElement.classList.add(`execution-${type}`);
+                cardElement.dataset.executionRole = type;
+            }
         }
     } catch (error) {
         console.error('Error marking position for execution:', error.message);
@@ -494,10 +503,12 @@ function clearPositionMarking(position) {
     console.log(`Clearing position marking at (${position.row}, ${position.col})`);
     
     try {
-        const cardElement = document.querySelector(`[data-row="${position.row}"][data-col="${position.col}"]`);
-        if (cardElement) {
-            cardElement.classList.remove('execution-starting', 'execution-destination', 'executing-move', 'execution-start', 'execution-end');
-            cardElement.removeAttribute('data-execution-role');
+        if (typeof document !== 'undefined') {
+            const cardElement = document.querySelector(`[data-row="${position.row}"][data-col="${position.col}"]`);
+            if (cardElement) {
+                cardElement.classList.remove('execution-starting', 'execution-destination', 'executing-move', 'execution-start', 'execution-end');
+                cardElement.removeAttribute('data-execution-role');
+            }
         }
     } catch (error) {
         console.error('Error clearing position marking:', error.message);
@@ -509,17 +520,19 @@ function updateMovementIndicators(moveData) {
     console.log('Updating movement indicators');
     
     try {
-        // Update distance indicators
-        const distanceElements = document.querySelectorAll('.move-distance-indicator');
-        distanceElements.forEach(element => {
-            element.textContent = `Distance: ${moveData.distance}`;
-        });
-        
-        // Update card type indicators
-        const cardTypeElements = document.querySelectorAll('.card-type-indicator');
-        cardTypeElements.forEach(element => {
-            element.textContent = `Card: ${moveData.cardType}`;
-        });
+        if (typeof document !== 'undefined') {
+            // Update distance indicators
+            const distanceElements = document.querySelectorAll('.move-distance-indicator');
+            distanceElements.forEach(element => {
+                element.textContent = `Distance: ${moveData.distance}`;
+            });
+            
+            // Update card type indicators
+            const cardTypeElements = document.querySelectorAll('.card-type-indicator');
+            cardTypeElements.forEach(element => {
+                element.textContent = `Card: ${moveData.cardType}`;
+            });
+        }
         
     } catch (error) {
         console.error('Error updating movement indicators:', error.message);
@@ -576,12 +589,14 @@ function cleanupTemporaryRenderingState(context) {
     console.log('Cleaning up temporary rendering state');
     
     try {
-        // Remove any temporary CSS classes
-        const tempElements = document.querySelectorAll('.executing-move, .execution-start, .execution-end, .execution-starting, .execution-destination');
-        tempElements.forEach(element => {
-            element.classList.remove('executing-move', 'execution-start', 'execution-end', 'execution-starting', 'execution-destination');
-            element.removeAttribute('data-execution-role');
-        });
+        if (typeof document !== 'undefined') {
+            // Remove any temporary CSS classes
+            const tempElements = document.querySelectorAll('.executing-move, .execution-start, .execution-end, .execution-starting, .execution-destination');
+            tempElements.forEach(element => {
+                element.classList.remove('executing-move', 'execution-start', 'execution-end', 'execution-starting', 'execution-destination');
+                element.removeAttribute('data-execution-role');
+            });
+        }
         
         // Clear any temporary data
         delete context.tempRenderingData;
@@ -626,3 +641,25 @@ function getRenderingIntegrationStatus() {
 }
 
 console.log('Rendering integration system loaded');
+
+// Export all functions for testing and module use
+export {
+    executeMovWithRendering,
+    createMoveExecutionContext,
+    validateExecutionContext,
+    executeCoordinatedMove,
+    handlePreExecutionRendering,
+    handlePostExecutionRendering,
+    updateBoardRenderingAfterMove,
+    renderAffectedPositions,
+    updatePlayerPawnRendering,
+    completeRenderingIntegration,
+    highlightExecutionPath,
+    markPositionForExecution,
+    clearPositionMarking,
+    updateMovementIndicators,
+    clearExecutionVisualIndicators,
+    rollbackRenderingChanges,
+    cleanupTemporaryRenderingState,
+    getRenderingIntegrationStatus
+};
