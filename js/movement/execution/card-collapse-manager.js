@@ -63,9 +63,12 @@ function collapseStartingCardAfterMove(startingPosition, moveData) {
 
 // Validate that a card can be collapsed
 function validateCardCanBeCollapsed(card, position, moveData) {
-    console.log('Validating card can be collapsed:', card.type);
-    
     try {
+        console.log(`Validating card can be collapsed: ${card ? card.type : 'null'}`);
+        
+        if (!card) {
+            throw new Error('Card is null or undefined');
+        }
         // Check if card is already collapsed
         if (card.collapsed) {
             return {
@@ -156,9 +159,12 @@ function validateCollapseAgainstGameRules(card, position, moveData) {
 
 // Perform the actual card collapse operation
 function performCardCollapse(card, position, moveData) {
-    console.log(`Performing collapse on ${card.type} at (${position.row}, ${position.col})`);
-    
     try {
+        if (!card) {
+            throw new Error('Card is null or undefined');
+        }
+        
+        console.log(`Performing collapse on ${card.type} at (${position.row}, ${position.col})`);
         // Mark card as collapsed
         card.collapsed = true;
         

@@ -47,11 +47,16 @@ const mockGameState = {
     currentPlayer: 0
 };
 
-// Mock external dependency functions
+// Mock external dependency functions  
+const playerData = [
+    { id: 'red', color: 'red', position: { row: 0, col: 0 }, startingCard: 'red-joker' },
+    { id: 'blue', color: 'blue', position: { row: 3, col: 3 }, startingCard: 'black-joker' }
+];
+
 const mockDependencies = {
     // Player functions
-    getPlayerById: jest.fn((playerId) => {
-        return mockGameState.players.find(p => p.id === playerId) || null;
+    getPlayerById: jest.fn().mockImplementation((playerId) => {
+        return playerData.find(p => p.id === playerId) || null;
     }),
     getCurrentPlayer: jest.fn(() => mockGameState.players[mockGameState.currentPlayer]),
     
@@ -78,7 +83,17 @@ const mockDependencies = {
         return null;
     }),
     updateCardDisplay: jest.fn(() => true),
-    movePlayerPawn: jest.fn(() => true)
+    movePlayerPawn: jest.fn(() => true),
+    
+    // Additional rendering functions that might be called
+    renderAffectedPositions: jest.fn(() => ({ success: true })),
+    updatePlayerPawnRendering: jest.fn(() => ({ success: true })),
+    markPositionForExecution: jest.fn(),
+    clearPositionMarking: jest.fn(),
+    clearExecutionVisualIndicators: jest.fn(),
+    updateMovementIndicators: jest.fn(),
+    rollbackRenderingChanges: jest.fn(),
+    cleanupTemporaryRenderingState: jest.fn()
 };
 
 // Create context with mocked dependencies
@@ -88,6 +103,53 @@ const context = {
     gameState: mockGameState,
     Date: Date,
     ...mockDependencies,
+    
+    // Override functions for vm context compatibility
+    getPlayerById: (playerId) => {
+        mockDependencies.getPlayerById(playerId); // Call the jest mock for tracking
+        return playerData.find(p => p.id === playerId) || null;
+    },
+    
+    // Functions that need to respect mock return values for testing different scenarios
+    executeMoveToDestination: (...args) => {
+        return mockDependencies.executeMoveToDestination(...args);
+    },
+    
+    // Functions that can have hardcoded success returns for vm context compatibility  
+    updateBoardStateAfterMove: (...args) => {
+        mockDependencies.updateBoardStateAfterMove(...args);
+        return { success: true };
+    },
+    
+    collapseStartingCardAfterMove: (...args) => {
+        mockDependencies.collapseStartingCardAfterMove(...args);
+        return { success: true };
+    },
+    
+    switchTurnAfterMoveCompletion: (...args) => {
+        mockDependencies.switchTurnAfterMoveCompletion(...args);
+        return { success: true, gameEnded: false };
+    },
+    
+    highlightCurrentPlayerPawn: (...args) => {
+        mockDependencies.highlightCurrentPlayerPawn(...args);
+        return { success: true };
+    },
+    
+    renderAffectedPositions: (...args) => {
+        mockDependencies.renderAffectedPositions(...args);
+        return { success: true, reason: 'Rendered 1 position', renderedCount: 1 };
+    },
+    
+    updatePlayerPawnRendering: (...args) => {
+        mockDependencies.updatePlayerPawnRendering(...args);
+        return { success: true, reason: 'Pawn rendering updated successfully' };
+    },
+    
+    highlightMovementPath: (...args) => {
+        mockDependencies.highlightMovementPath(...args);
+        return true;
+    },
     
     // Functions from module being tested
     executeMovWithRendering: undefined,

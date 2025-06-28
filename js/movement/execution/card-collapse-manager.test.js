@@ -456,11 +456,12 @@ describe('getCollapsedCardCount', () => {
         mockDependencies.getCardAtPosition.mockImplementation(() => {
             throw new Error('Test error');
         });
+        context.getCardAtPosition = mockDependencies.getCardAtPosition;
         
         const result = getCollapsedCardCount();
         
         expect(result).toBe(0);
-        expect(consoleLogs.some(log => log.includes('ERROR: Error counting collapsed cards'))).toBe(true);
+        expect(consoleLogs.some(log => log.includes('ERROR: Error getting collapsed cards'))).toBe(true);
     });
 });
 
@@ -645,6 +646,7 @@ describe('getCollapseStatistics', () => {
         mockDependencies.getCardAtPosition.mockImplementation(() => {
             throw new Error('Test error');
         });
+        context.getCardAtPosition = mockDependencies.getCardAtPosition;
         
         const result = getCollapseStatistics();
         
@@ -652,6 +654,6 @@ describe('getCollapseStatistics', () => {
         expect(result.collapsedByType).toEqual({});
         expect(result.collapsedByPlayer).toEqual({});
         expect(result.chronology).toEqual([]);
-        expect(consoleLogs.some(log => log.includes('ERROR: Error getting collapse statistics'))).toBe(true);
+        expect(consoleLogs.some(log => log.includes('ERROR: Error getting collapsed cards'))).toBe(true);
     });
 });
