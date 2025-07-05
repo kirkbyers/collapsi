@@ -6,6 +6,9 @@
 - `server/room-manager.js` - Room creation, joining, expiration, and lifecycle management
 - `server/game-validator.js` - Server-side game state validation using existing movement modules
 - `server/utils.js` - Server utility functions for room code generation and validation
+- `server/room-manager.test.js` - Unit tests for room management functionality
+- `server/utils.test.js` - Unit tests for server utility functions
+- `server/server.test.js` - Integration tests for WebSocket and HTTP server functionality
 - `js/multiplayer.js` - WebSocket client for connecting to server and handling real-time communication
 - `js/ui.js` - Updated UI interactions to include game mode selection and room interface
 - `js/game.js` - Modified to support both local and online multiplayer modes
@@ -24,10 +27,10 @@
 ## Tasks
 
 - [ ] 1.0 Backend Server Setup and Room Management
-  - [ ] 1.1 Initialize Node.js server with Express and Socket.io dependencies
-  - [ ] 1.2 Create basic HTTP server serving static files from project root
-  - [ ] 1.3 Implement WebSocket connection handling with Socket.io
-  - [ ] 1.4 Create room management system with 6-digit alphanumeric code generation
+  - [x] 1.1 Initialize Node.js server with Express and Socket.io dependencies
+  - [x] 1.2 Create basic HTTP server serving static files from project root
+  - [x] 1.3 Implement WebSocket connection handling with Socket.io
+  - [x] 1.4 Create room management system with 6-digit alphanumeric code generation
   - [ ] 1.5 Implement room creation with optional user-specified codes
   - [ ] 1.6 Add profanity filtering for server-generated room codes
   - [ ] 1.7 Implement room joining logic with player limit enforcement (2 players max)
@@ -83,3 +86,15 @@
   - [ ] 5.8 Add server-side error logging and monitoring
   - [ ] 5.9 Create user-friendly error notifications and recovery suggestions
   - [ ] 5.10 Test error scenarios and ensure proper fallback behavior
+
+- [ ] 6.0 Backend Testing and Validation
+  - [ ] 6.1 Write unit tests for RoomManager class (room creation, validation, expiration)
+  - [ ] 6.2 Write unit tests for server utility functions (profanity filtering, color assignment)
+  - [ ] 6.3 Write integration tests for WebSocket connection handling and events
+  - [ ] 6.4 Write tests for room joining/leaving logic with player limits
+  - [ ] 6.5 Write tests for room expiration and cleanup functionality
+  - [ ] 6.6 Write tests for rejoin functionality after disconnection
+  - [ ] 6.7 Write performance tests for room code generation and validation
+  - [ ] 6.8 Write tests for error handling and edge cases
+  - [ ] 6.9 Add load testing for concurrent room management
+  - [ ] 6.10 Create test fixtures and mocks for server-side testing
