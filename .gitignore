@@ -1,2 +1,3 @@
 .claude
-node_modulescoverage/
+coverage
+node_modules
