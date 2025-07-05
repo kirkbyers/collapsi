@@ -1,4 +1,5 @@
 // Room management system for Collapsi online multiplayer
+const { containsProfanity } = require('./utils');
 
 class RoomManager {
   constructor() {
@@ -19,11 +20,11 @@ class RoomManager {
     return code;
   }
   
-  // Generate a unique room code that doesn't exist yet
+  // Generate a unique room code that doesn't exist yet and is clean
   generateUniqueRoomCode() {
     let code;
     let attempts = 0;
-    const maxAttempts = 100;
+    const maxAttempts = 1000; // Increased for profanity filtering
     
     do {
       code = this.generateRoomCode();
@@ -32,7 +33,7 @@ class RoomManager {
       if (attempts > maxAttempts) {
         throw new Error('Unable to generate unique room code after maximum attempts');
       }
-    } while (this.rooms.has(code));
+    } while (this.rooms.has(code) || containsProfanity(code));
     
     return code;
   }
@@ -47,6 +48,7 @@ class RoomManager {
   // Create a new room
   createRoom(roomCode = null, creatorSocketId = null) {
     // Use provided code or generate new one
+    // Note: profanity filtering only applies to auto-generated codes
     const code = roomCode || this.generateUniqueRoomCode();
     
     // Validate the code format
@@ -198,6 +200,23 @@ class RoomManager {
     }
     
     return room;
+  }
+  
+  // Mark game as completed and schedule faster expiration
+  markGameCompleted(code, winner = null) {
+    const room = this.getRoom(code);
+    if (!room) return false;
+    
+    room.gameCompleted = true;
+    room.gameCompletedAt = new Date();
+    room.winner = winner;
+    room.lastActivity = new Date();
+    
+    // Schedule faster expiration (1 minute)
+    this.scheduleRoomExpiration(code);
+    
+    console.log(`Game completed in room ${code}, winner: ${winner || 'none'}`);
+    return true;
   }
   
   // Clean up expired rooms (manual cleanup)
