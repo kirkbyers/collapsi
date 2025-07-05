@@ -28,6 +28,20 @@ python -m http.server 8000
 npx live-server
 ```
 
+### Testing
+```bash
+# Run all tests (702 tests in <5 seconds)
+npm test
+
+# Run tests with coverage analysis
+npm run test:coverage
+
+# Run specific test suites
+npm run test:movement    # Movement system tests
+npm run test:integration # Integration tests only
+npm run test:fast        # Quick unit tests only
+```
+
 ### Mobile Testing
 ```bash
 # Find IP for mobile device testing
@@ -81,8 +95,9 @@ This project intentionally uses no build tools, package managers, or frameworks.
 - **Phase 2**: JavaScript data structures and game state
 - **Phase 3**: Complete movement validation system (modular architecture)
 - **Phase 4**: Move execution and game state management
+- **Phase 5**: Comprehensive JavaScript testing implementation
 
-### Current Phase (Phase 5): UI Integration
+### Current Phase (Phase 6): UI Integration
 **Next major task**: Connect the sophisticated backend movement system to user interface interactions.
 
 ### Implementation Notes
@@ -90,6 +105,8 @@ This project intentionally uses no build tools, package managers, or frameworks.
 - Complete joker mechanics with state machine implementation
 - Comprehensive error handling and rollback support
 - Path visualization and move preview capabilities
+- **TDD-developed codebase** with 702 tests ensuring reliability
+- **Test-first development** strongly encouraged for all new features
 
 ## File Organization Patterns
 
@@ -110,8 +127,33 @@ Each module in `js/movement/` follows single responsibility principle:
 
 ## Testing Approach
 
+### Test-Driven Development (TDD) - **STRONGLY ENCOURAGED**
+- **Write tests first** for all new features and bug fixes
+- **Red-Green-Refactor cycle**: Write failing test → Make it pass → Refactor
+- **Fast feedback loop**: Run `npm test` frequently during development
+- **Design through testing**: Use tests to drive API design and function interfaces
+
+### TDD Workflow for New Features
+1. **Write the test first** - Define expected behavior before implementation
+2. **Run test to see it fail** - Confirm the test is actually testing something
+3. **Write minimal code** to make the test pass
+4. **Refactor** while keeping tests green
+5. **Repeat** for each small piece of functionality
+
+### Automated Testing (Jest Framework)
+- **702 comprehensive tests** covering all critical game logic
+- **Unit tests** for all modules co-located with source files
+- **Integration tests** for complete game flows and UI interactions
+- **Performance optimized** - full suite runs in <5 seconds
+- **High coverage** on critical areas (movement system, game logic)
+
+### Test Organization
+- Unit tests: `*.test.js` files alongside source code
+- Integration tests: `tests/integration/` directory
+- Test utilities: `tests/utils/` with shared fixtures and helpers
+- Coverage reporting: `npm run test:coverage` generates HTML reports
+
 ### Manual Testing
-- No formal testing framework - uses manual testing approach
 - Chrome DevTools for mobile device simulation
 - Real device testing via local server
 - Console.log debugging throughout codebase
@@ -123,11 +165,28 @@ Each module in `js/movement/` follows single responsibility principle:
 
 ## Common Development Tasks
 
-### Adding New Movement Rules
-1. Update relevant module in `js/movement/core/`
-2. Add validation logic in `js/movement/validation/`
-3. Test with console debugging and manual gameplay
-4. Update execution system if needed in `js/movement/execution/`
+### Adding New Movement Rules (TDD Approach)
+1. **Write tests first** - Define expected behavior in `*.test.js` files
+2. **Run tests** to see them fail (red)
+3. **Implement logic** in relevant module (`js/movement/core/`, `js/movement/validation/`)
+4. **Make tests pass** (green)
+5. **Refactor** code while keeping tests green
+6. **Add integration tests** for complete movement flows
+7. **Update execution system** if needed in `js/movement/execution/`
+
+### Adding New Game Features (TDD Approach)
+1. **Write unit tests** for the new feature's expected behavior
+2. **Write integration tests** for how it fits into game flow
+3. **Run tests** to confirm they fail appropriately
+4. **Implement minimal code** to make tests pass
+5. **Refactor** and optimize while maintaining green tests
+6. **Add edge case tests** as you discover them
+
+### Bug Fixes (TDD Approach)
+1. **Write a test** that reproduces the bug (should fail)
+2. **Fix the bug** with minimal code changes
+3. **Confirm the test passes** and no other tests break
+4. **Add additional tests** for related edge cases
 
 ### Styling Changes
 1. Use existing CSS custom properties when possible
@@ -135,11 +194,13 @@ Each module in `js/movement/` follows single responsibility principle:
 3. Maintain mobile-first approach with 375px base width
 4. Ensure touch targets remain accessible (44px minimum)
 
-### Game State Modifications
-1. Update core game state in `js/game.js`
-2. Ensure localStorage persistence compatibility
-3. Update board rendering logic if needed
-4. Test game flow from start to completion
+### Game State Modifications (TDD Approach)
+1. **Write tests** for expected game state changes
+2. **Update core game state** in `js/game.js`
+3. **Ensure localStorage persistence** compatibility with tests
+4. **Update board rendering logic** if needed
+5. **Run full test suite** to ensure no regressions
+6. **Test complete game flow** from start to completion
 
 ## Documentation
 
@@ -147,5 +208,7 @@ Each module in `js/movement/` follows single responsibility principle:
 - **plan.md**: Comprehensive implementation roadmap with all phases
 - **tasks/**: Structured development phases with detailed PRDs
 - **rules.pdf/txt**: Official Collapsi game rules
+- **docs/testing-guide.md**: Comprehensive testing patterns and practices
+- **docs/coverage-analysis.md**: Test coverage analysis and assessment
 
-The project follows a highly structured development approach with detailed planning documents and modular architecture for maintainability.
+The project follows a highly structured development approach with detailed planning documents, modular architecture, and comprehensive test coverage for maintainability.
