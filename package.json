@@ -7,8 +7,12 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
+    "test:coverage-html": "jest --coverage --coverageReporters=html",
     "test:unit": "jest --testPathPattern='\\.test\\.js$'",
-    "test:integration": "jest --testPathPattern='tests/integration'"
+    "test:integration": "jest --testPathPattern='tests/integration'",
+    "test:movement": "jest --testPathPattern='js/movement'",
+    "test:fast": "jest --maxWorkers=1 --forceExit",
+    "test:ci": "jest --coverage --ci --watchAll=false --passWithNoTests"
   },
   "repository": {
     "type": "git",
